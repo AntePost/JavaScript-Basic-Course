@@ -9,28 +9,29 @@
     <script>
       // Exercise 1
       const convertCelcToFahr = () => {
-        const tempCelc = parseFloat(prompt('Enter temperature in Celcius'));
+        let tempCelc = prompt('Enter temperature in Celcius');
+        if (isNumberWithComma(tempCelc)) {
+          tempCelc = tempCelc.split(',').join('.');
+        }
 
         if (isNaN(tempCelc)) {
           alert('Enter temperature as a number');
         } else {
           let tempFahr = tempCelc * 1.8 + 32;
+          // Rounds numbers to second decimal
           tempFahr = Math.round(tempFahr * 100) / 100;
+          tempCelc = Math.round(tempCelc * 100) / 100;
           alert(`${tempCelc} degrees of Celcius equals ${tempFahr} degrees in Fahrenheit`);
         }
       };
 
       // Checks whether number contains comma
       const isNumberWithComma = num => {
-        const pattern = /^\d+,\d+/;
-        if (pattern.test(num)) {
-          return true;
-        } else {
-          return false;
-        }
+        const pattern = /^\d+,\d+$/;
+        return pattern.test(num);
       };
-      
-      //convertCelcToFahr();
+
+      convertCelcToFahr();
     </script>
   </body>
 </html>
