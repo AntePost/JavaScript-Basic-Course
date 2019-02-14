@@ -20,7 +20,17 @@
         }
       };
 
-      convertCelcToFahr();
+      // Checks whether number contains comma
+      const isNumberWithComma = num => {
+        const pattern = /^\d+,\d+/;
+        if (pattern.test(num)) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+      
+      //convertCelcToFahr();
     </script>
   </body>
 </html>
