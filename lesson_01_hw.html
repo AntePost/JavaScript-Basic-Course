@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Lesson 1 Homework</title>
+  </head>
+  <body>
+
+    <script>
+      // Exercise 1
+      const convertCelcToFahr = () => {
+        const tempCelc = parseFloat(prompt('Enter temperature in Celcius'));
+
+        if (tempCelc === NaN) {
+          alert('Enter temperature as a number');
+        } else {
+          const tempFahr = tempCelc * 1.8 + 32;
+          alert(`${tempCelc} degrees of Celcius equals ${tempFahr.toFixed(2)} degrees in Fahrenheit`);
+        }
+      };
+
+      convertCelcToFahr();
+    </script>
+  </body>
+</html>
