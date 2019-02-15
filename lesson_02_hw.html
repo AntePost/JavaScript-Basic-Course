@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Lesson 1 Homework</title>
+  </head>
+  <body>
+    <script>
+      // Exercise 0
+      const guessNumber = () => {
+        while (true) {
+          const number = generateRndIntFromInterval(1, 10);
+          let userAnswer;
+
+          while (userAnswer != number) {
+            userAnswer = prompt('Enter a number between 1000 and 9999');
+            if (userAnswer > number) {
+              alert(`Your guess ${userAnswer} is too high. Guess again.`);
+            } else if (userAnswer < number) {
+              alert(`Your guess ${userAnswer} is too low. Guess again.`);
+            }
+          }
+
+          alert(`You guessed ${userAnswer}. Correct!`);
+          const toQuit = prompt('To quit the game enter q');
+          if (toQuit == 'q') {
+            break;
+          }
+          alert('New round');
+        }
+      }
+
+      const generateRndIntFromInterval = (min, max) => {
+        return Math.floor(Math.random() * (max - min +1) + min);
+      }
+
+      guessNumber();
+    </script>
+  </body>
+</html>
