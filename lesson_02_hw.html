@@ -188,6 +188,15 @@
       console.log(mathOperation(10, 5, 'sub'));
       console.log(mathOperation(10, 5, 'mul'));
       console.log(mathOperation(10, 5, 'div'));
+
+      // Exercise 7
+      console.log('Exercise 7');
+      console.log(`null > 0 is ${null > 0}`);
+      console.log(`null == 0 is ${null == 0}`);
+      console.log(`null >= 0 is ${null >= 0}`);
+      // Первые два сравнения возвращают false, последнее возвращает true.
+      // Это происходит потому, что при сравнении на > или >= null конвертируется в 0. 0 > 0 - false, 0 >= 0 - true.
+      // Но при сравнении на равенство null не конвертируется, и по особенностям JS null и undefined равны друг другу и ничему более.
     </script>
   </body>
 </html>
