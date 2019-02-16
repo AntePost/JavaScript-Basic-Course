@@ -8,15 +8,18 @@
     <script>
       // Exercise 0
       const guessNumber = () => {
+        let min = +prompt('Enter lower bound');
+        let max = +prompt('Enter higher bound');
+
         while (true) {
-          const number = generateRndIntFromInterval(1000, 9999);
+          const number = generateRndIntFromInterval(min, max);
           let userAnswer;
           let attemptsCounter = 0;
-          alert('Random number between 1000 and 9999 has been chosen. Guess it!');
+          alert(`Random number between ${min} and ${max} has been chosen. Guess it!`);
 
           while (userAnswer != number) {
             attemptsCounter++;
-            userAnswer = prompt(`This is try number ${attemptsCounter}. Enter a number between 1000 and 9999. To quit the game press Cancel`);
+            userAnswer = prompt(`This is try number ${attemptsCounter}. Enter a number between ${min} and ${max}. To quit the game press Cancel`);
 
             if (userAnswer == null) {
               alert('You chose to quit the game. Goodbye!');
