@@ -81,6 +81,74 @@
       }
 
       calculateDependingOnSigns();
+
+      // Exercise 4 (version 1)
+      const displayFromXTo15 = () => {
+        let a = generateRndIntFromInterval(0, 15);
+        console.log(`a = ${a}`);
+        switch (a) {
+          case 0:
+            console.log(a);
+            a++;
+          case 1:
+            console.log(a);
+            a++;
+          case 2:
+            console.log(a);
+            a++;
+          case 3:
+            console.log(a);
+            a++;
+          case 4:
+            console.log(a);
+            a++;
+          case 5:
+            console.log(a);
+            a++;
+          case 6:
+            console.log(a);
+            a++;
+          case 7:
+            console.log(a);
+            a++;
+          case 8:
+            console.log(a);
+            a++;
+          case 9:
+            console.log(a);
+            a++;
+          case 10:
+            console.log(a);
+            a++;
+          case 11:
+            console.log(a);
+            a++;
+          case 12:
+            console.log(a);
+            a++;
+          case 13:
+            console.log(a);
+            a++;
+          case 14:
+            console.log(a);
+            a++;
+          case 15:
+            console.log(a);
+        }
+      }
+
+      displayFromXTo15();
+
+      // Exercise 4 (version 2)
+      const displayFromXTo15v2 = () => {
+        let a = generateRndIntFromInterval(0, 15);
+        console.log(`a = ${a}`);
+        for (a; a <= 15; a++) {
+          console.log(a);
+        }
+      }
+
+      displayFromXTo15v2();
     </script>
   </body>
 </html>
