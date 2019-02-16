@@ -40,7 +40,7 @@
       }
 
       const generateRndIntFromInterval = (min, max) => {
-        return Math.floor(Math.random() * (max - min +1) + min);
+        return Math.floor(Math.random() * (max - min + 1) + min);
       }
 
       const isOnlyWhitespace = (str) => {
@@ -65,6 +65,22 @@
       console.log(x);
       // Результат операции равен 5. Оператор присваивания с операцией имеет более низкий приоритет, чем сложение, но скобки имеют наивысший приоритет.
       // Поэтому сначала выполняется умножение, а потом сложение.
+
+      // Exercise 3
+      const calculateDependingOnSigns = () => {
+        const a = generateRndIntFromInterval(-10, 10);
+        const b = generateRndIntFromInterval(-10, 10);
+
+        if (a >= 0 && b >= 0) {
+          console.log(`a = ${a}, b = ${b}. Their difference = ${a - b}`);
+        } else if (a < 0 && b < 0) {
+          console.log(`a = ${a}, b = ${b}. Their product = ${a * b}`);
+        } else {
+          console.log(`a = ${a}, b = ${b}. Their sum = ${a + b}`);
+        }
+      }
+
+      calculateDependingOnSigns();
     </script>
   </body>
 </html>
