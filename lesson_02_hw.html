@@ -51,6 +51,7 @@
       guessNumber();
 
       // Exercise 1
+      console.log('Exercise 1');
       var a = 1, b = 1, c, d;
       c = ++a; console.log(c); // Использована префиксная запись, сначала происходит инкрементация, а потом возврат значения. Результат alert - 2.
       d = b++; console.log(d); // Использована постфиксная запись, сначала происходит возврат значения, а потом инкрементация. Результат alert - 1.
@@ -60,6 +61,7 @@
       console.log(b); // b была инкрементирована 2 раза от начального значения в 1. Результат alert - 3.
 
       // Exercise 2
+      console.log('Exercise 2');
       var a = 2;
       var x = 1 + (a *= 2);
       console.log(x);
@@ -68,6 +70,7 @@
 
       // Exercise 3
       const calculateDependingOnSigns = () => {
+      console.log('Exercise 3');
         const a = generateRndIntFromInterval(-10, 10);
         const b = generateRndIntFromInterval(-10, 10);
 
@@ -84,6 +87,7 @@
 
       // Exercise 4 (version 1)
       const displayFromXTo15 = () => {
+        console.log('Exercise 4 (version 1)');
         let a = generateRndIntFromInterval(0, 15);
         console.log(`a = ${a}`);
         switch (a) {
@@ -141,6 +145,7 @@
 
       // Exercise 4 (version 2)
       const displayFromXTo15v2 = () => {
+        console.log('Exercise 4 (version 2)');
         let a = generateRndIntFromInterval(0, 15);
         console.log(`a = ${a}`);
         for (a; a <= 15; a++) {
@@ -149,6 +154,40 @@
       }
 
       displayFromXTo15v2();
+
+      // Exercise 5
+      const addTwoNumbers = (a, b) => {
+        return a + b;
+      }
+      const subtractTwoNumbers = (a, b) => {
+        return a - b;
+      }
+      const multiplyTwoNumbers = (a, b) => {
+        return a * b;
+      }
+      const divideTwoNumbers = (a, b) => {
+        return a / b;
+      }
+
+      // Exercise 6
+      function mathOperation(arg1, arg2, operation) {
+        switch (operation) {
+          case 'add':
+            return addTwoNumbers(arg1, arg2);
+          case 'sub':
+            return subtractTwoNumbers(arg1, arg2);
+          case 'mul':
+            return multiplyTwoNumbers(arg1, arg2);
+          case 'div':
+            return divideTwoNumbers(arg1, arg2);
+        }
+      }
+
+      console.log('Exercise 6');
+      console.log(mathOperation(10, 5, 'add'));
+      console.log(mathOperation(10, 5, 'sub'));
+      console.log(mathOperation(10, 5, 'mul'));
+      console.log(mathOperation(10, 5, 'div'));
     </script>
   </body>
 </html>
