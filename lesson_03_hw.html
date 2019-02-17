@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <script>
+      // Exercise 1
+      const calcPrimesUpTo100 = () => {
+        let n = 0;
+        const primesUpTo10 = [2, 3, 5, 7];
+        while (n <= 100) {
+          if (!isDivisibleByPrimes(primesUpTo10, n) || isPrimeUpTo10(primesUpTo10, n)) {
+            console.log(n);
+            n++;
+          } else {
+            n++;
+            continue;
+          }
+        }
+      }
+
+      const isDivisibleByPrimes = (arr, n) => {
+        for (var i = 0; i < arr.length; i++) {
+          if (n % arr[i] == 0) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      const isPrimeUpTo10 = (arr, n) => {
+        for (var i = 0; i < arr.length; i++) {
+          if (arr.includes(n)) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      calcPrimesUpTo100();
+    </script>
+  </body>
+</html>
