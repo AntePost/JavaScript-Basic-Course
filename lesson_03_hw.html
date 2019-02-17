@@ -7,20 +7,28 @@
   <body>
     <script>
       // Exercise 1
-      const calcPrimesUpTo100 = () => {
-        let n = 0;
-        const primesUpTo10 = [2, 3, 5, 7];
+      // Сделал версию, которая ищет простые числа до max.
+      // Сначала используется решето Эрастофена, чтобы найти простые числа, меньшие чем sqrt of max.
+      // Потом используется проверка на делимость с использованием первого массива простых чисел.
+      const calcPrimesUpToN = (max) => {
+        let n = 2;
+        const primesUpToSqrtN = sieveOfEratosthenes(max);
+        const primes = [];
+
         console.log('Exercise 1');
-        console.log('All primes from 0 to 100:');
-        while (n <= 100) {
-          if (!isDivisibleByPrimes(primesUpTo10, n) || isPrimeUpTo10(primesUpTo10, n)) {
-            console.log(n);
+        console.log(`All primes from 0 to ${max}:`);
+
+        while (n <= max) {
+          if (!isDivisibleByPrimes(primesUpToSqrtN, n) || isPrimeUpToN(primesUpToSqrtN, n)) {
+            primes.push(n);
             n++;
           } else {
             n++;
             continue;
           }
         }
+
+        console.log(primes);
       }
 
       const isDivisibleByPrimes = (arr, n) => {
@@ -32,7 +40,7 @@
         return false;
       }
 
-      const isPrimeUpTo10 = (arr, n) => {
+      const isPrimeUpToN = (arr, n) => {
         for (var i = 0; i < arr.length; i++) {
           if (arr.includes(n)) {
             return true;
@@ -41,7 +49,30 @@
         return false;
       }
 
-      calcPrimesUpTo100();
+      // Подсмотрел алгоритм решета в интернете, сделал немного измененную версию
+      // https://www.craigrodrigues.com/blog/the-sieve-of-eratosthenes-in-javascript
+      const sieveOfEratosthenes = max => {
+        const sieve = new Array(Math.floor(Math.sqrt(max))).fill(true);
+
+        for (var i = 2; i < sieve.length; i++) {
+          if (sieve[i]) {
+            for (var j = Math.pow(i, 2); j < max; j += i) {
+              sieve[j] = false;
+            }
+          }
+        }
+
+        const primes = [];
+        for (var i = 0; i < max; i++) {
+          if (sieve[i] && i > 1) {
+            primes.push(i);
+          }
+        }
+
+        return primes;
+      };
+
+      calcPrimesUpToN(1000);
 
       // Exercise 2 (a)
       const basket = [
