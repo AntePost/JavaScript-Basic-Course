@@ -6,6 +6,150 @@
   </head>
   <body>
     <script>
+      // Exercise 0
+      const guessNumber = () => {
+        let nOfDigits = prompt('Enter number of digits for the number (no more than 5)');
+        while (nOfDigits > 5 || nOfDigits <= -1 || isZero(nOfDigits) || isIncorrectInput(nOfDigits) || nOfDigits == null) {
+          if (nOfDigits > 5) {
+            alert('No more than 5!');
+          }
+          if (nOfDigits <= -1 || isZero(nOfDigits)) {
+            alert('Fool! There can\'t be fewer than 1 digit');
+          }
+          if (isIncorrectInput(nOfDigits) || nOfDigits == null) {
+            alert('Please enter a number');
+          }
+          nOfDigits = prompt('Enter number of digits for the number (no more than 5)');
+        }
+
+        while (true) {
+          const number = generateNDigitNumberNonRepeatingDigits(nOfDigits);
+          let userAnswer;
+          let attemptsCounter = 0;
+          alert(`Random number with ${nOfDigits} non-repeating digits has been chosen. Guess it!`);
+
+          while (userAnswer != number) {
+            attemptsCounter++;
+            userAnswer = prompt(`This is try number ${attemptsCounter}. Enter a ${nOfDigits}-digit number with non-repeating digits. To quit the game press Cancel`);
+
+            if (userAnswer == null) {
+              alert('You chose to quit the game. Goodbye!');
+              return;
+            } else if (isIncorrectInput(userAnswer)) {
+              alert('Please enter a number');
+            }
+
+            if (userAnswer != number) {
+              const cowsAndBulls =  calcNumberOfCowsAndBulls(number, userAnswer);
+              alert(`You guessed ${userAnswer}\nNumber of cows = ${cowsAndBulls[0]}\nNumber of bulls = ${cowsAndBulls[1]}`);
+            }
+          }
+
+          alert(`You guessed ${userAnswer}. Correct! It took you ${attemptsCounter} tries.`);
+          const toQuit = prompt('To quit the game enter q\nTo change number of digits press c');
+          if (toQuit == 'q') {
+            break;
+          } else if (toQuit == 'c') {
+            nOfDigits = +prompt('Enter number of digits for the number');
+          }
+          alert('New round!');
+        }
+      }
+
+      /*const generateRndIntFromInterval = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+      }*/
+
+      const generateNDigitNumberNonRepeatingDigits = n => {
+        const oneToNine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        if (n == 1) {
+          oneToNine.push(0);
+        }
+        const numbers = [];
+
+        let rndItem = [Math.floor(Math.random() * oneToNine.length)];
+        numbers.push(oneToNine[rndItem]);
+        oneToNine.splice(rndItem, 1);
+        if (n != 1) {
+          oneToNine.push(0);
+        }
+
+        for (var i = 0; i < n - 1; i++) {
+          rndItem = [Math.floor(Math.random() * oneToNine.length)];
+          numbers.push(oneToNine[rndItem]);
+          oneToNine.splice(rndItem, 1);
+        }
+        let number = numbers.join('');
+        return number;
+      };
+
+      const isOnlyWhitespace = (str) => {
+        const pattern = /^\s+$/;
+        return pattern.test(str);
+      }
+
+      const isIncorrectInput = (input) => {
+        if (isNaN(input) || input === '' || isOnlyWhitespace(input)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      const isZero = (input) => {
+        if (input == null || isOnlyWhitespace(input) || input == '') {
+          return false;
+        }
+        return +input === 0 ? true : false;
+      }
+
+      const calcNumberOfCowsAndBulls = (number, userAnswer) => {
+        let numberOfCows = 0;
+        let numberOfBulls = 0;
+        const numArr = number.split('');
+        const ansArr = userAnswer.split('');
+
+        for (var i = 0; i < ansArr.length; i++) {
+          if (ansArr[i] == numArr[i]) {
+            numberOfBulls++;
+          } else if (numArr.includes(ansArr[i])) {
+            numberOfCows++;
+          }
+        }
+
+        return [numberOfCows, numberOfBulls];
+      };
+
+      /*const determineBound = (whichBound) => {
+        let input;
+        while (true) {
+          input = prompt(`Enter ${whichBound} bound`);
+          if (isIncorrectInput(input) || input == null) {
+            alert('Enter correct number (integer)');
+          } else {
+            return input;
+          }
+        }
+      }*/
+
+      /*const setBounds = () => {
+        const minMax = [];
+        minMax.push(+determineBound('lower'));
+        minMax.push(+determineBound('upper'));
+
+        while (true) {
+          if (minMax[0] >= minMax[1]) {
+            alert('Lower bound must be lower than upper bound. Try again');
+            minMax[0] = +determineBound('lower');
+            minMax[1] = +determineBound('upper');
+          } else {
+            return minMax;
+          }
+        }
+      }*/
+
+      guessNumber();
+
       // Exercise 1
       // Сделал версию, которая ищет простые числа до max.
       // Сначала используется решето Эрастофена, чтобы найти простые числа, меньшие чем sqrt of max.
