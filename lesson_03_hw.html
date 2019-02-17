@@ -10,6 +10,8 @@
       const calcPrimesUpTo100 = () => {
         let n = 0;
         const primesUpTo10 = [2, 3, 5, 7];
+        console.log('Exercise 1');
+        console.log('All primes from 0 to 100:');
         while (n <= 100) {
           if (!isDivisibleByPrimes(primesUpTo10, n) || isPrimeUpTo10(primesUpTo10, n)) {
             console.log(n);
@@ -40,6 +42,25 @@
       }
 
       calcPrimesUpTo100();
+
+      // Exercise 2 (a)
+      const basket = [
+        {name: 'Product 1', price: 500, currency: 'usd'},
+        {name: 'Product 2', price: 200, currency: 'usd'},
+        {name: 'Product 3', price: 100, currency: 'usd'},
+      ];
+
+      // Exercise 2 (b)
+      const countBasketPrice = arr => {
+        let sum = 0;
+        console.log('Exercise 2');
+        for (var i = 0; i < arr.length; i++) {
+          sum += arr[i].price;
+        }
+        console.log(`Sum total of chosen products is ${sum} ${arr[0].currency.toUpperCase()}.`);
+      };
+
+      countBasketPrice(basket);
     </script>
   </body>
 </html>
