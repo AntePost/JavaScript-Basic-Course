@@ -7,16 +7,15 @@
   <body>
     <script>
       // Exercise 0
-      const guessNumber = () => {
+      const guessNumberWithBullsAndCows = () => {
         let nOfDigits = prompt('Enter number of digits for the number (no more than 5)');
+        // Checks nOfDigits for correct input
         while (nOfDigits > 5 || nOfDigits <= -1 || isZero(nOfDigits) || isIncorrectInput(nOfDigits) || nOfDigits == null) {
           if (nOfDigits > 5) {
             alert('No more than 5!');
-          }
-          if (nOfDigits <= -1 || isZero(nOfDigits)) {
+          } else if (nOfDigits <= -1 || isZero(nOfDigits)) {
             alert('Fool! There can\'t be fewer than 1 digit');
-          }
-          if (isIncorrectInput(nOfDigits) || nOfDigits == null) {
+          } else if (isIncorrectInput(nOfDigits) || nOfDigits == null) {
             alert('Please enter a number');
           }
           nOfDigits = prompt('Enter number of digits for the number (no more than 5)');
@@ -35,8 +34,22 @@
             if (userAnswer == null) {
               alert('You chose to quit the game. Goodbye!');
               return;
-            } else if (isIncorrectInput(userAnswer)) {
-              alert('Please enter a number');
+            }
+
+            // Checks userAnswer for correct input
+            while (isIncorrectInput(userAnswer) || userAnswer == null || userAnswer.length != nOfDigits || (userAnswer[0] == '0' && userAnswer.length != 1) || areDigitsRepeating(userAnswer) || userAnswer < 0) {
+              if (isIncorrectInput(userAnswer) || userAnswer == null) {
+                alert('Please enter a number');
+              } else if (userAnswer.length != nOfDigits) {
+                alert(`Number must contain ${nOfDigits} digits`);
+              } else if (userAnswer[0] == '0' && userAnswer.length != 1) {
+                alert(`${nOfDigits}-digit number can't start with zero`);
+              } else if (areDigitsRepeating(userAnswer)) {
+                alert('Digits can\'t be repeating!');
+              } else if (userAnswer < 0) {
+                alert('Number that was guessed is positive');
+              }
+              userAnswer = prompt(`Enter a ${nOfDigits}-digit number with non-repeating digits.`);
             }
 
             if (userAnswer != number) {
@@ -55,10 +68,6 @@
           alert('New round!');
         }
       }
-
-      /*const generateRndIntFromInterval = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-      }*/
 
       const generateNDigitNumberNonRepeatingDigits = n => {
         const oneToNine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -120,35 +129,18 @@
         return [numberOfCows, numberOfBulls];
       };
 
-      /*const determineBound = (whichBound) => {
-        let input;
-        while (true) {
-          input = prompt(`Enter ${whichBound} bound`);
-          if (isIncorrectInput(input) || input == null) {
-            alert('Enter correct number (integer)');
-          } else {
-            return input;
+      const areDigitsRepeating = num => {
+        num = num.split('');
+        num.sort();
+        for (var i = 0; i < num.length; i++) {
+          if (num[i] == num[i + 1]) {
+            return true;
           }
         }
-      }*/
+        return false;
+      };
 
-      /*const setBounds = () => {
-        const minMax = [];
-        minMax.push(+determineBound('lower'));
-        minMax.push(+determineBound('upper'));
-
-        while (true) {
-          if (minMax[0] >= minMax[1]) {
-            alert('Lower bound must be lower than upper bound. Try again');
-            minMax[0] = +determineBound('lower');
-            minMax[1] = +determineBound('upper');
-          } else {
-            return minMax;
-          }
-        }
-      }*/
-
-      guessNumber();
+      guessNumberWithBullsAndCows();
 
       // Exercise 1
       // Сделал версию, которая ищет простые числа до max.
