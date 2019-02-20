@@ -140,7 +140,7 @@
         return false;
       };
 
-      guessNumberWithBullsAndCows();
+      //guessNumberWithBullsAndCows();
 
       // Exercise 1
       // Сделал версию, которая ищет простые числа до max.
@@ -212,32 +212,45 @@
 
       // Exercise 2 (a)
       const basket = [
-        {name: 'Product 1', price: 500, currency: 'usd'},
-        {name: 'Product 2', price: 200, currency: 'usd'},
-        {name: 'Product 3', price: 100, currency: 'usd'},
+        {name: 'Product 1', price: 500, quantity: 1, currency: 'usd'},
+        {name: 'Product 2', price: 200, quantity: 2, currency: 'usd'},
+        {name: 'Product 3', price: 100, quantity: 3, currency: 'usd'},
       ];
 
-      // Exercise 2 (b)
-      const countBasketPrice = arr => {
+      // Exercise 2 (b) (version 1)
+      const countBasketPriceV1 = arr => {
         let sum = 0;
-        console.log('Exercise 2');
+        console.log('Exercise 2 (version 1)');
         for (var i = 0; i < arr.length; i++) {
-          sum += arr[i].price;
+          sum += arr[i].price * arr[i].quantity;
         }
         console.log(`Sum total of chosen products is ${sum} ${arr[0].currency.toUpperCase()}.`);
       };
 
-      countBasketPrice(basket);
+      countBasketPriceV1(basket);
+
+      // Exercise 2 (b) (version 1)
+      const countBasketPriceV2 = arr => {
+        console.log('Exercise 2 (version 2)');
+        let sum = arr.reduce((acc, cur) => {
+          return acc + cur.price * cur.quantity;
+        }, 0);
+        console.log(`Sum total of chosen products is ${sum} ${arr[0].currency.toUpperCase()}.`);
+      };
+
+      countBasketPriceV2(basket);
 
       // Exercise 3
       const display0To9 = () => {
+        console.log('Exercise 3');
         for (var i = 0; i < 10; console.log(i++)) {;}
       };
 
       display0To9();
 
-      // Exercise 4
-      const drawPiramidInConsole = () => {
+      // Exercise 4 (version 1)
+      const drawPiramidInConsoleV1 = () => {
+        console.log('Exercise 4 (version 1)');
         const x = 'x';
         for (var i = 1; i <= 20; i++) {
           let str = '';
@@ -248,7 +261,17 @@
         }
       };
 
-      drawPiramidInConsole();
+      drawPiramidInConsoleV1();
+
+      // Exercise 4 (version 1)
+      const drawPiramidInConsoleV2 = () => {
+        console.log('Exercise 4 (version 2)');
+        for (var str ='x'; str.length <= 20; str += 'x') {
+          console.log(str);
+        }
+      };
+
+      drawPiramidInConsoleV2();
     </script>
   </body>
 </html>
