@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Lesson 4 Homework</title>
+  </head>
+  <body>
+    <script>
+      // Exercise 1
+      const convertNumToObj = (n) => {
+        if (n < 0 || n > 999) {
+          console.log(`Number ${n} is outside of range`);
+          return {};
+        } else {
+          let obj = {};
+          nStr = n.toString();
+
+          if (nStr.length < 3) {
+            nStr = nStr.padStart(3, '0');
+          }
+
+          obj.ones = +nStr[2];
+          obj.tens = +nStr[1];
+          obj.hundreds = +nStr[0];
+
+          console.log(`Number ${n} consists of:`);
+          console.log(obj);
+          return obj;
+        }
+      }
+
+      console.log('Exercise 1');
+      convertNumToObj(-5);
+      convertNumToObj(1234);
+      convertNumToObj(1);
+      convertNumToObj(23);
+      convertNumToObj(456);
+    </script>
+  </body>
+</html>
