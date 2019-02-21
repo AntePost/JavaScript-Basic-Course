@@ -29,12 +29,99 @@
         }
       }
 
-      console.log('Exercise 1');
+      console.log('Exercise 1:');
       convertNumToObj(-5);
       convertNumToObj(1234);
       convertNumToObj(1);
       convertNumToObj(23);
       convertNumToObj(456);
+
+      // Exercise 2
+      class Product {
+        constructor(name, price, quantity) {
+          this.name = name;
+          this.price = price;
+          this.quantity = quantity;
+        }
+      }
+
+      const basket = {
+        currency: 'usd',
+        items: [
+          {name: 'Product 1', price: 500, quantity: 1},
+          {name: 'Product 2', price: 200, quantity: 2},
+          {name: 'Product 3', price: 100, quantity: 3},
+        ],
+
+        countBasketPrice() {
+          let sum = this.items.reduce((acc, cur) => {
+            return acc + cur.price * cur.quantity;
+          }, 0);
+          return sum;
+        },
+
+        clearBasket() {
+          this.items = [];
+        },
+
+        addItemToBasket(name, price, quantity) {
+          this.items.push(new Product(name, price, quantity));
+        },
+
+        removeItemFromBasket(name) {
+          for (var i = 0; i < this.items.length; i++) {
+            if (this.items[i].name == name) {
+              this.items.splice(i, 1);
+            }
+          }
+        },
+
+        displayItemsInConsole() {
+          for (var i = 0; i < this.items.length; i++) {
+            console.log(`There is ${this.items[i].quantity} item(s) of ${this.items[i].name} (price: ${this.items[i].price}) in the basket.`);
+          }
+        },
+
+        changeQuantity(name, n) {
+          for (var i = 0; i < this.items.length; i++) {
+            if (this.items[i].name == name) {
+              if (n == 0) {
+                this.items.splice(i, 1);
+              } else {
+                this.items[i].quantity = n;
+              }
+            }
+          }
+        }
+      }
+
+      console.log('Exercise 2:');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
+      console.log('---');
+      console.log('Clearing the basket');
+      basket.clearBasket();
+      console.log('Adding new items');
+      basket.addItemToBasket('Product 4', 1000, 1);
+      basket.addItemToBasket('Product 5', 1500, 2);
+      basket.addItemToBasket('Product 6', 2000, 3);
+      console.log('---');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
+      console.log('---');
+      console.log('Removing second item');
+      basket.removeItemFromBasket('Product 5');
+      console.log('---');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
+      console.log('---');
+      console.log('Changing quantity of Product 4 to 5 items');
+      basket.changeQuantity('Product 4', 5);
+      console.log('Changing quantity of Product 6 to 0 items');
+      basket.changeQuantity('Product 6', 0);
+      console.log('---');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
     </script>
   </body>
 </html>
