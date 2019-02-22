@@ -6,6 +6,245 @@
   </head>
   <body>
     <script>
+      // Exercise 01
+      const dungeonCrawlerGame = {
+        map: [
+          [
+            {type: 'room', explored: true, content: null},
+            {type: 'room', explored: false, content: null},
+            {type: 'room', explored: false, content: 'chest'},
+          ],
+          [
+            {type: 'wall', explored: false, content: null},
+            {type: 'room', explored: false, content: null},
+            {type: 'wall', explored: false, content: null},
+          ],
+          [
+            {type: 'room', explored: false, content: 'chest'},
+            {type: 'room', explored: false, content: null},
+            {type: 'room', explored: false, content: 'skeleton'},
+          ]
+        ],
+        player: {
+          position: {x: 0, y: 0},
+          hasPotion: false,
+          attack: 1,
+          hp: 10,
+          choseToRun: false,
+          hasWon: false
+        },
+        chestConentArr: ['potion', 'sword'],
+        skeleton: {
+          hp: 10,
+          attack: 2
+        },
+
+        drawMap() {
+          let mapStr = 'The map of the area:\nP - player, X - unexplored, R - room, W - wall';
+          for (var i = 0; i < 3; i++) {
+            mapStr += '\n';
+            for (var j = 0; j < 3; j++) {
+              if (this.player.position.x == j && this.player.position.y == i) {
+                mapStr += '[P ]'; // Puts player on the map
+              } else if (!this.map[i][j].explored) {
+                mapStr += '[X ]';
+              } else {
+                switch (this.map[i][j].type) {
+                  case 'room':
+                    mapStr += '[R ]';
+                    break;
+                  case 'wall':
+                    mapStr += '[W]';
+                    break;
+                }
+              }
+            }
+          }
+          alert(mapStr);
+        },
+
+        movePlayer() {
+          let direction = prompt('Where would you want to go? (up, down, left, right)');
+          while (direction != 'up' && direction != 'down' && direction != 'right' && direction != 'left') {
+            direction = prompt('Enter one of possible directions (up, down, left, right)');
+          }
+          switch (direction) {
+            case 'up':
+              if (this.player.position.y - 1 < 0) {
+                alert('You can\'t go there');
+              } else {
+                this.player.position.y--;
+                this.map[this.player.position.y][this.player.position.x].explored = true;
+              }
+
+              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                this.player.position.y++;
+              }
+              break;
+            case 'down':
+              if (this.player.position.y + 1 > 3) {
+                alert('You can\'t go there');
+              } else {
+                this.player.position.y++;
+                this.map[this.player.position.y][this.player.position.x].explored = true;
+              }
+
+              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                this.player.position.y--;
+              }
+              break;
+            case 'left':
+              if (this.player.position.x - 1 < 0) {
+                alert('You can\'t go there');
+              } else {
+                this.player.position.x--;
+                this.map[this.player.position.y][this.player.position.x].explored = true;
+              }
+
+              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                this.player.position.x++;
+              }
+              break;
+            case 'right':
+              if (this.player.position.x + 1 > 3) {
+                alert('You can\'t go there');
+              } else {
+                this.player.position.x++;
+                this.map[this.player.position.y][this.player.position.x].explored = true;
+              }
+
+              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                this.player.position.x--;
+              }
+              break;
+          }
+        },
+
+        interactWithContent() {
+          if (this.map[this.player.position.y][this.player.position.x].content == 'chest') {
+            this.lootChest();
+            this.map[this.player.position.y][this.player.position.x].content = null;
+          } else if (this.map[this.player.position.y][this.player.position.x].content == 'skeleton') {
+            this.fightSkeleton();
+            this.map[this.player.position.y][this.player.position.x].content = null;
+          }
+        },
+
+        lootChest() {
+          alert('In this room you\'ve found a chest!');
+          const chestContent = this.determineChestContent();
+          if (chestContent == 'potion') {
+            this.player.hasPotion = true;
+            alert('You\'ve found a healing potion');
+          } else if (chestContent == 'sword') {
+            this.player.attack += 2;
+            alert('You\'ve found a good sword. You\'ve gained 2 attack');
+          }
+        },
+
+        determineChestContent() {
+          const rndPosition = Math.floor(Math.random() * this.chestConentArr.length);
+          const chestContent = this.chestConentArr[rndPosition];
+          this.chestConentArr.splice(rndPosition, 1);
+          return chestContent;
+        },
+
+        fightSkeleton() {
+          alert('In this room you\'ve found a menacing skeleton');
+          while (this.player.hp > 0 && this.skeleton.hp > 0) {
+            this.playerBattleTurn();
+            if (this.player.choseToRun) {
+              this.player.choseToRun = false;
+              return;
+            }
+            this.skeletonBattleTurn();
+          }
+
+          if (this.player.hp <= 0) {
+
+          } else if (this.skeleton.hp <= 0) {
+            alert('You\'ve defeated the evil skeleton!');
+            this.player.hasWon = true;
+          }
+        },
+
+        playerBattleTurn() {
+          const action = prompt(`Your HP: ${this.player.hp}\nSkeleton's HP: ${this.skeleton.hp}\nTo attack enter a\nTo drink potion enter p\nTo run press r`);
+          if (action == 'a') {
+            alert('You swing your sword wildly');
+            const isHit = this.isHit();
+            if (isHit) {
+              alert('You\'ve hit the skeleton');
+              this.skeleton.hp -= this.player.attack;
+            } else {
+              alert('You\'ve missed the skeleton');
+            }
+          } else if (action == 'p') {
+            if (this.player.hasPotion) {
+              alert('The potion invigorates you. You\'ve gained 3 HP')
+              this.player.hp += 3;
+              if (this.player.hp > 10) {
+                this.player.hp = 10;
+              }
+              this.player.hasPotion = false;
+            } else {
+              alert('You have no potion to drink');
+            }
+          } else if (action == 'r') {
+            alert('You\'ve chosen to run');
+            this.player.position.x--;
+            this.player.choseToRun = true;
+            return;
+          } else {
+            alert('You\'ve lost your wits and do nothing');
+          }
+        },
+
+        skeletonBattleTurn() {
+          alert('Skeleton attacks you!');
+          const isHit = this.isHit();
+          if (isHit) {
+            alert('It hits you');
+            this.player.hp -= this.skeleton.attack;
+          } else {
+            alert('It misses');
+          }
+        },
+
+        isHit() {
+          return Math.random() >= 0.3;
+        },
+
+        turn() {
+          alert('To win the game defeat the enemy');
+          while (!this.player.hasWon && this.player.hp > 0) {
+            this.drawMap();
+            this.movePlayer();
+            this.interactWithContent()
+            toQuit = prompt('To quit the game press q');
+            if (toQuit == 'q') {
+              return;
+            }
+          }
+
+          this.endGame();
+        },
+
+        endGame() {
+          if (this.player.hasWon) {
+            alert('You\'ve won the game!');
+          } else {
+            alert('You\'ve lost the game and died');
+          }
+        }
+      }
+
+      dungeonCrawlerGame.turn();
+
       // Exercise 1
       const convertNumToObj = (n) => {
         if (n < 0 || n > 999) {
