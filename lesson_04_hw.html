@@ -7,6 +7,7 @@
   <body>
     <script>
       // Exercise 01
+      // Написал простенький dungeon crawler.
       const dungeonCrawlerGame = {
         map: [
           [
@@ -83,7 +84,7 @@
               }
               break;
             case 'down':
-              if (this.player.position.y + 1 > 3) {
+              if (this.player.position.y + 1 > 2) {
                 alert('You can\'t go there');
               } else {
                 this.player.position.y++;
@@ -109,7 +110,7 @@
               }
               break;
             case 'right':
-              if (this.player.position.x + 1 > 3) {
+              if (this.player.position.x + 1 > 2) {
                 alert('You can\'t go there');
               } else {
                 this.player.position.x++;
@@ -165,7 +166,7 @@
           }
 
           if (this.player.hp <= 0) {
-
+            alert('Skeleton cuts off your head!');
           } else if (this.skeleton.hp <= 0) {
             alert('You\'ve defeated the evil skeleton!');
             this.player.hasWon = true;
@@ -221,10 +222,13 @@
 
         turn() {
           alert('To win the game defeat the enemy');
-          while (!this.player.hasWon && this.player.hp > 0) {
+          while (true) {
             this.drawMap();
             this.movePlayer();
-            this.interactWithContent()
+            this.interactWithContent();
+            if (this.player.hasWon || this.player.hp <= 0) {
+              break;
+            }
             toQuit = prompt('To quit the game press q');
             if (toQuit == 'q') {
               return;
@@ -244,6 +248,207 @@
       }
 
       dungeonCrawlerGame.turn();
+
+      // Exercise 02
+      const millionaireGame = {
+        questionsDB: [
+          {
+            quesText: 'Как правильно закончить пословицу: «Не откладывай на завтра то, что можно…»?',
+            answers: ['сделать сегодня', 'сделать послезавтра', 'сделать через месяц', 'никогда не делать'],
+            correct: 0,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Что говорит человек, когда замечает нечто необычное?',
+            answers: ['попало в лоб', 'залетело в рот', 'накапало в уши', 'бросилось в глаза'],
+            correct: 3,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Что помогает туристу ориентироваться в незнакомом городе?',
+            answers: ['путепровод', 'путеукладчик', 'путеводитель', 'путеводная звезда'],
+            correct: 2,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Какой наряд прославил баснописец Крылов?',
+            answers: ['тришкин кафтан', 'ивашкин армяк', 'прошкин зипун', 'машкин сарафан'],
+            correct: 0,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Как звали старшую сестру императора Петра Первого?',
+            answers: ['Вера', 'Надежда', 'Любовь', 'Софья'],
+            correct: 3,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Что не бывает морским?',
+            answers: ['рельс', 'огурец', 'гребешок', 'узел'],
+            correct: 0,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Кого с большим основанием можно назвать островитянами?',
+            answers: ['алеутов', 'эвенков', 'чукчей', 'якутов'],
+            correct: 0,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'В какой стране появилась мандолина?',
+            answers: ['Испания', 'Италия', 'Венгрия', 'Греция'],
+            correct: 1,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Как жители Лондона прозвали небоскреб Мэри-Экс, спроектированный Норманом Фостером?',
+            answers: ['«корнишон»', '«баклажан»', '«кабачок»', '«патиссон»'],
+            correct: 0,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Какой врач первым в истории русской медицины применил гипсовую повязку?',
+            answers: ['Субботин', 'Пирогов', 'Боткин', 'Склифосовский'],
+            correct: 1,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Где в Древней Греции можно было увидеть надпись: «Здесь живут мертвые и говорят немые»?',
+            answers: ['на кладбищах', 'в больницах', 'в библиотеках', 'в тюрьмах'],
+            correct: 2,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'Кто был одним из авторов сценария фильма «Музыкальная история» с Сергеем Лемешевым в главной роли?',
+            answers: ['Илья Ильф', 'Евгений Петров', 'Михаил Зощенко', 'Аркадий Аверченко'],
+            correct: 1,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'С чем часто охотятся на рыбу протоптера между сезонами дождей?',
+            answers: ['с сетями', 'с сачками', 'с ружьями', 'с лопатами'],
+            correct: 3,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'Каким видом спорта серьезно увлекался французский летчик Ролан Гаррос?',
+            answers: ['пинг-понгом', 'поло', 'гольфом', 'регби'],
+            correct: 3,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'Что такое лобогрейка?',
+            answers: ['жнейка', 'шапка', 'болезнь', 'печка'],
+            correct: 0,
+            difficulty: 'hard',
+          },
+        ],
+
+        questionSet: [],
+
+        intialPrize: 100,
+
+        prizesArr: [],
+
+        nOfQuestions: {
+          easy: 3,
+          medium: 3,
+          hard: 3
+        },
+
+        get fixedPositions() {
+          return [this.nOfQuestions.easy - 1, this.nOfQuestions.easy + this.nOfQuestions.medium - 1, this.nOfQuestions.easy + this.nOfQuestions.medium + this.nOfQuestions.hard - 1];
+        },
+
+        fillPrizesArr() {
+          const nOfQuestions = Object.values(this.nOfQuestions).reduce((acc, cur) => acc + cur);
+          let prize = this.intialPrize;
+          for (var i = 0; i < nOfQuestions; i++) {
+            if (i === 0) {
+              // pass
+            } else if (i % 2 !== 0) {
+              prize *= 5;
+            } else if (i % 2 === 0) {
+              prize *= 2;
+            }
+            this.prizesArr.push(prize);
+          }
+        },
+
+        buildQuestionSet() {
+          let arrByDiffic;
+          this.buildDifficultyBlock('easy', 0);
+          this.buildDifficultyBlock('medium', this.nOfQuestions.easy);
+          this.buildDifficultyBlock('hard', this.nOfQuestions.easy + this.nOfQuestions.medium);
+        },
+
+        buildDifficultyBlock(difficulty, n) {
+          arrByDiffic = this.questionsDB.filter(el => el.difficulty === difficulty);
+          for (var i = n; i < n + 3; i++) {
+            const rndInt = Math.floor(Math.random() * arrByDiffic.length);
+            const question = this.buildQuestion(arrByDiffic[rndInt], this.prizesArr[i], i);
+            this.questionSet.push(question);
+            arrByDiffic.splice(rndInt, 1);
+          }
+        },
+
+        buildQuestion(obj, prize, i) {
+          const question = {
+            quesText: obj.quesText,
+            answers: obj.answers,
+            correct: obj.correct,
+            prize: prize,
+            fixed: this.fixedPositions.includes(i) ? true : false,
+          };
+          return question;
+        },
+
+        buildQuestionText(obj, i) {
+          let text = `Вопрос №${i + 1} на ${obj.prize} рублей${obj.fixed ? ' (несгораемая сумма)' : ''}:\n\n${obj.quesText}`;
+          const ansArr = Array.from(obj.answers);
+          let nOfCorrect;
+
+          for (var i = 0; i < obj.answers.length; i++) {
+            const rndInt = Math.floor(Math.random() * ansArr.length);
+            text += `\n${i + 1}) ${ansArr[rndInt]}`;
+            if (ansArr[rndInt] === obj.answers[obj.correct]) {
+              nOfCorrect = i;
+            }
+            ansArr.splice(rndInt, 1);
+          }
+          text += `\n\nВведите номер правильного ответа`
+          return [text, nOfCorrect];
+        },
+
+        playGame() {
+          this.fillPrizesArr();
+          this.buildQuestionSet();
+          let finalPrize = 0;
+          for (var i = 0; i < this.questionSet.length; i++) {
+            const textAndNOfCorrect = this.buildQuestionText(this.questionSet[i], i)
+            const answer = +prompt(textAndNOfCorrect[0]);
+            if (textAndNOfCorrect[1] == answer - 1) {
+              alert(`Правильно. Сумма выигрыша составила ${this.questionSet[i].prize}`);
+              if (this.questionSet[i].fixed) {
+                finalPrize = this.questionSet[i].prize;
+              }
+              if (i === 8) {
+                alert('Поздравляем, вы выиграли!')
+              }
+            } else {
+              alert(`Увы, вы проиграли. Сумма вашего выигрыша составила ${finalPrize} рублей`);
+              break;
+            }
+          }
+
+          const playAgain = +prompt('Чтобы сыграть еще один раудн, нажмите 1\n');
+          if (playAgain == 1) {
+            this.playGame();
+          }
+        },
+      }
+
+      millionaireGame.playGame();
 
       // Exercise 1
       const convertNumToObj = (n) => {
@@ -317,7 +522,7 @@
 
         displayItemsInConsole() {
           for (var i = 0; i < this.items.length; i++) {
-            console.log(`There is ${this.items[i].quantity} item(s) of ${this.items[i].name} (price: ${this.items[i].price}) in the basket.`);
+            console.log(`There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of ${this.items[i].name} (price: ${this.items[i].price}) in the basket.`);
           }
         },
 
