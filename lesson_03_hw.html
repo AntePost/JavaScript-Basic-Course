@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <script>
+      // Exercise 0
+      const guessNumberWithBullsAndCows = () => {
+        let nOfDigits = prompt('Enter number of digits for the number (no more than 5)');
+        // Checks nOfDigits for correct input
+        while (nOfDigits > 5 || nOfDigits <= -1 || isZero(nOfDigits) || isIncorrectInput(nOfDigits) || nOfDigits == null) {
+          if (nOfDigits > 5) {
+            alert('No more than 5!');
+          } else if (nOfDigits <= -1 || isZero(nOfDigits)) {
+            alert('Fool! There can\'t be fewer than 1 digit');
+          } else if (isIncorrectInput(nOfDigits) || nOfDigits == null) {
+            alert('Please enter a number');
+          }
+          nOfDigits = prompt('Enter number of digits for the number (no more than 5)');
+        }
+
+        while (true) {
+          const number = generateNDigitNumberNonRepeatingDigits(nOfDigits);
+          let userAnswer;
+          let attemptsCounter = 0;
+          alert(`Random number with ${nOfDigits} non-repeating digits has been chosen. Guess it!`);
+
+          while (userAnswer != number) {
+            attemptsCounter++;
+            userAnswer = prompt(`This is try number ${attemptsCounter}. Enter a ${nOfDigits}-digit number with non-repeating digits. To quit the game press Cancel`);
+
+            if (userAnswer == null) {
+              alert('You chose to quit the game. Goodbye!');
+              return;
+            }
+
+            // Checks userAnswer for correct input
+            while (isIncorrectInput(userAnswer) || userAnswer == null || userAnswer.length != nOfDigits || (userAnswer[0] == '0' && userAnswer.length != 1) || areDigitsRepeating(userAnswer) || userAnswer < 0) {
+              if (isIncorrectInput(userAnswer) || userAnswer == null) {
+                alert('Please enter a number');
+              } else if (userAnswer.length != nOfDigits) {
+                alert(`Number must contain ${nOfDigits} digits`);
+              } else if (userAnswer[0] == '0' && userAnswer.length != 1) {
+                alert(`${nOfDigits}-digit number can't start with zero`);
+              } else if (areDigitsRepeating(userAnswer)) {
+                alert('Digits can\'t be repeating!');
+              } else if (userAnswer < 0) {
+                alert('Number that was guessed is positive');
+              }
+              userAnswer = prompt(`Enter a ${nOfDigits}-digit number with non-repeating digits.`);
+            }
+
+            if (userAnswer != number) {
+              const cowsAndBulls =  calcNumberOfCowsAndBulls(number, userAnswer);
+              alert(`You guessed ${userAnswer}\nNumber of cows = ${cowsAndBulls[0]}\nNumber of bulls = ${cowsAndBulls[1]}`);
+            }
+          }
+
+          alert(`You guessed ${userAnswer}. Correct! It took you ${attemptsCounter} tries.`);
+          const toQuit = prompt('To quit the game enter q\nTo change number of digits press c');
+          if (toQuit == 'q') {
+            break;
+          } else if (toQuit == 'c') {
+            nOfDigits = +prompt('Enter number of digits for the number');
+          }
+          alert('New round!');
+        }
+      }
+
+      const generateNDigitNumberNonRepeatingDigits = n => {
+        const oneToNine = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        if (n == 1) {
+          oneToNine.push(0);
+        }
+        const numbers = [];
+
+        let rndItem = [Math.floor(Math.random() * oneToNine.length)];
+        numbers.push(oneToNine[rndItem]);
+        oneToNine.splice(rndItem, 1);
+        if (n != 1) {
+          oneToNine.push(0);
+        }
+
+        for (var i = 0; i < n - 1; i++) {
+          rndItem = [Math.floor(Math.random() * oneToNine.length)];
+          numbers.push(oneToNine[rndItem]);
+          oneToNine.splice(rndItem, 1);
+        }
+        let number = numbers.join('');
+        return number;
+      };
+
+      const isOnlyWhitespace = (str) => {
+        const pattern = /^\s+$/;
+        return pattern.test(str);
+      }
+
+      const isIncorrectInput = (input) => {
+        if (isNaN(input) || input === '' || isOnlyWhitespace(input)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      const isZero = (input) => {
+        if (input == null || isOnlyWhitespace(input) || input == '') {
+          return false;
+        }
+        return +input === 0 ? true : false;
+      }
+
+      const calcNumberOfCowsAndBulls = (number, userAnswer) => {
+        let numberOfCows = 0;
+        let numberOfBulls = 0;
+        const numArr = number.split('');
+        const ansArr = userAnswer.split('');
+
+        for (var i = 0; i < ansArr.length; i++) {
+          if (ansArr[i] == numArr[i]) {
+            numberOfBulls++;
+          } else if (numArr.includes(ansArr[i])) {
+            numberOfCows++;
+          }
+        }
+
+        return [numberOfCows, numberOfBulls];
+      };
+
+      const areDigitsRepeating = num => {
+        num = num.split('');
+        num.sort();
+        for (var i = 0; i < num.length; i++) {
+          if (num[i] == num[i + 1]) {
+            return true;
+          }
+        }
+        return false;
+      };
+
+      guessNumberWithBullsAndCows();
+
+      // Exercise 1
+      // Сделал версию, которая ищет простые числа до max.
+      // Сначала используется решето Эрастофена, чтобы найти простые числа, меньшие чем sqrt of max.
+      // Потом используется проверка на делимость с использованием первого массива простых чисел.
+      const calcPrimesUpToN = (max) => {
+        let n = 2;
+        const primesUpToSqrtN = sieveOfEratosthenes(max);
+        const primes = [];
+
+        console.log('Exercise 1');
+        console.log(`All primes from 0 to ${max}:`);
+
+        while (n <= max) {
+          if (!isDivisibleByPrimes(primesUpToSqrtN, n) || isPrimeUpToN(primesUpToSqrtN, n)) {
+            primes.push(n);
+            n++;
+          } else {
+            n++;
+            continue;
+          }
+        }
+
+        console.log(primes);
+      }
+
+      const isDivisibleByPrimes = (arr, n) => {
+        for (var i = 0; i < arr.length; i++) {
+          if (n % arr[i] == 0) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      const isPrimeUpToN = (arr, n) => {
+        for (var i = 0; i < arr.length; i++) {
+          if (arr.includes(n)) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      // Подсмотрел алгоритм решета в интернете, сделал немного измененную версию
+      // https://www.craigrodrigues.com/blog/the-sieve-of-eratosthenes-in-javascript
+      const sieveOfEratosthenes = max => {
+        const sieve = new Array(Math.floor(Math.sqrt(max))).fill(true);
+
+        for (var i = 2; i < sieve.length; i++) {
+          if (sieve[i]) {
+            for (var j = Math.pow(i, 2); j < max; j += i) {
+              sieve[j] = false;
+            }
+          }
+        }
+
+        const primes = [];
+        for (var i = 0; i < max; i++) {
+          if (sieve[i] && i > 1) {
+            primes.push(i);
+          }
+        }
+
+        return primes;
+      };
+
+      calcPrimesUpToN(1000);
+
+      // Exercise 2 (a)
+      const basket = [
+        {name: 'Product 1', price: 500, quantity: 1, currency: 'usd'},
+        {name: 'Product 2', price: 200, quantity: 2, currency: 'usd'},
+        {name: 'Product 3', price: 100, quantity: 3, currency: 'usd'},
+      ];
+
+      // Exercise 2 (b) (version 1)
+      const countBasketPriceV1 = arr => {
+        let sum = 0;
+        console.log('Exercise 2 (version 1)');
+        for (var i = 0; i < arr.length; i++) {
+          sum += arr[i].price * arr[i].quantity;
+        }
+        console.log(`Sum total of chosen products is ${sum} ${arr[0].currency.toUpperCase()}.`);
+      };
+
+      countBasketPriceV1(basket);
+
+      // Exercise 2 (b) (version 2)
+      const countBasketPriceV2 = arr => {
+        console.log('Exercise 2 (version 2)');
+        let sum = arr.reduce((acc, cur) => {
+          return acc + cur.price * cur.quantity;
+        }, 0);
+        console.log(`Sum total of chosen products is ${sum} ${arr[0].currency.toUpperCase()}.`);
+      };
+
+      countBasketPriceV2(basket);
+
+      // Exercise 3
+      const display0To9 = () => {
+        console.log('Exercise 3');
+        for (var i = 0; i < 10; console.log(i++)) {;}
+      };
+
+      display0To9();
+
+      // Exercise 4 (version 1)
+      const drawPiramidInConsoleV1 = () => {
+        console.log('Exercise 4 (version 1)');
+        const x = 'x';
+        for (var i = 1; i <= 20; i++) {
+          let str = '';
+          for (var j = 0; j < i; j++) {
+            str += x;
+          }
+          console.log(str);
+        }
+      };
+
+      drawPiramidInConsoleV1();
+
+      // Exercise 4 (version 2)
+      const drawPiramidInConsoleV2 = () => {
+        console.log('Exercise 4 (version 2)');
+        for (var str ='x'; str.length <= 20; str += 'x') {
+          console.log(str);
+        }
+      };
+
+      drawPiramidInConsoleV2();
+    </script>
+  </body>
+</html>
