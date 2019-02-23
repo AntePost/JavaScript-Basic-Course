@@ -45,7 +45,7 @@
           for (var i = 0; i < 3; i++) {
             mapStr += '\n';
             for (var j = 0; j < 3; j++) {
-              if (this.player.position.x == j && this.player.position.y == i) {
+              if (x == j && y == i) {
                 mapStr += '[P ]'; // Puts player on the map
               } else if (!this.map[i][j].explored) {
                 mapStr += '[X ]';
@@ -71,67 +71,67 @@
           }
           switch (direction) {
             case 'up':
-              if (this.player.position.y - 1 < 0) {
+              if (y - 1 < 0) {
                 alert('You can\'t go there');
               } else {
-                this.player.position.y--;
-                this.map[this.player.position.y][this.player.position.x].explored = true;
+                y--;
+                this.map[y][x].explored = true;
               }
 
-              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+              if (this.map[y][x].type == 'wall') {
                 alert('You\'ve hit a wall');
-                this.player.position.y++;
+                y++;
               }
               break;
             case 'down':
-              if (this.player.position.y + 1 > 2) {
+              if (y + 1 > 2) {
                 alert('You can\'t go there');
               } else {
-                this.player.position.y++;
-                this.map[this.player.position.y][this.player.position.x].explored = true;
+                y++;
+                this.map[y][x].explored = true;
               }
 
-              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+              if (this.map[y][x].type == 'wall') {
                 alert('You\'ve hit a wall');
-                this.player.position.y--;
+                y--;
               }
               break;
             case 'left':
-              if (this.player.position.x - 1 < 0) {
+              if (x - 1 < 0) {
                 alert('You can\'t go there');
               } else {
-                this.player.position.x--;
-                this.map[this.player.position.y][this.player.position.x].explored = true;
+                x--;
+                this.map[y][x].explored = true;
               }
 
-              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+              if (this.map[y][x].type == 'wall') {
                 alert('You\'ve hit a wall');
-                this.player.position.x++;
+                x++;
               }
               break;
             case 'right':
-              if (this.player.position.x + 1 > 2) {
+              if (x + 1 > 2) {
                 alert('You can\'t go there');
               } else {
-                this.player.position.x++;
-                this.map[this.player.position.y][this.player.position.x].explored = true;
+                x++;
+                this.map[y][x].explored = true;
               }
 
-              if (this.map[this.player.position.y][this.player.position.x].type == 'wall') {
+              if (this.map[y][x].type == 'wall') {
                 alert('You\'ve hit a wall');
-                this.player.position.x--;
+                x--;
               }
               break;
           }
         },
 
         interactWithContent() {
-          if (this.map[this.player.position.y][this.player.position.x].content == 'chest') {
+          if (this.map[y][x].content == 'chest') {
             this.lootChest();
-            this.map[this.player.position.y][this.player.position.x].content = null;
-          } else if (this.map[this.player.position.y][this.player.position.x].content == 'skeleton') {
+            this.map[y][x].content = null;
+          } else if (this.map[y][x].content == 'skeleton') {
             this.fightSkeleton();
-            this.map[this.player.position.y][this.player.position.x].content = null;
+            this.map[y][x].content = null;
           }
         },
 
@@ -197,7 +197,7 @@
             }
           } else if (action == 'r') {
             alert('You\'ve chosen to run');
-            this.player.position.x--;
+            x--;
             this.player.choseToRun = true;
             return;
           } else {
@@ -246,6 +246,10 @@
           }
         }
       }
+
+      // Destructuring
+      let { player: {position: {x}} } = dungeonCrawlerGame;
+      let { player: {position: {y}} } = dungeonCrawlerGame;
 
       dungeonCrawlerGame.turn();
 
