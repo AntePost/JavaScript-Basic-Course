@@ -17,12 +17,12 @@
         box-sizing: border-box;
         border: 1px solid black;
         text-align: center;
-        line-height: 100px;
         font-size: 32px;
       }
       .chessBoardCell {
         width: 100px;
         height: 100px;
+        line-height: 100px;
       }
       .rotate {
         transform: rotate(180deg);
@@ -30,8 +30,67 @@
       .black {
         background-color: black;
       }
-      .white {
+      .beige {
         background-color: beige;
+      }
+
+      #basket {
+        width: 1002px;
+        margin: 0 auto;
+      }
+      ol {
+        text-align: left;
+      }
+
+      #basketControls {
+        width: 1002px;
+        margin: 10px auto 0;
+        text-align: inherit;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #clearBasket {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin: 10px;
+      }
+      #addItem {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+      }
+      form {
+        margin: 10px;
+        text-align: center;
+        display: flex;
+      }
+      label {
+        display: flex;
+        flex-direction: column;
+      }
+      input {
+        margin: 10px 10px 0 0;
+      }
+      select {
+        font-size: inherit;
+        height: 50px;
+      }
+      span {
+        margin: 0 50px;
+      }
+      #changeQuantity {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin-left: 50px;
+      }
+      #removeItem {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin-left: 50px;
       }
     </style>
     <script>
@@ -93,6 +152,188 @@
         drawChessBoard();
 
         // Exercise 2
+        class Product {
+          constructor(name, price, quantity) {
+            this.name = name;
+            this.price = price;
+            this.quantity = quantity;
+          }
+        }
+
+        const basket = {
+          currency: 'usd',
+          items: [
+            {name: 'Product 1', price: 500, quantity: 1},
+            {name: 'Product 2', price: 200, quantity: 2},
+            {name: 'Product 3', price: 100, quantity: 3},
+          ],
+
+          countBasketPrice() {
+            let sum = this.items.reduce((acc, cur) => {
+              return acc + cur.price * cur.quantity;
+            }, 0);
+            return sum;
+          },
+
+          constBasketItems() {
+            let sum = this.items.reduce((acc, cur) => {
+              return acc + cur.quantity;
+            }, 0);
+            return sum;
+          },
+
+          clearBasket() {
+            this.items = [];
+          },
+
+          addItemToBasket(name, price, quantity) {
+            this.items.push(new Product(name, price, quantity));
+          },
+
+          removeItemFromBasket(name) {
+            for (var i = 0; i < this.items.length; i++) {
+              if (this.items[i].name == name) {
+                this.items.splice(i, 1);
+              }
+            }
+          },
+
+          displayItems() {
+            const basket = document.getElementById('basket');
+            const totalItems = this.constBasketItems();
+
+            if (totalItems === 0) {
+              const totalText = 'The basket is empty';
+              const totalElem = document.createElement('p');
+              totalElem.innerHTML = totalText;
+              basket.appendChild(totalElem);
+            } else {
+              const totalText = `There ${totalItems === 1 ? 'is' : 'are'} ${totalItems} ${totalItems === 1 ? 'item' : 'items'} in the basket with total price of ${this.countBasketPrice()} ${this.currency.toUpperCase()}`;
+              const totalElem = document.createElement('p');
+              totalElem.innerHTML = totalText;
+
+              basket.appendChild(totalElem);
+
+              const itemList = document.createElement('ol');
+              basket.appendChild(itemList);
+              for (var i = 0; i < this.items.length; i++) {
+                const liText = `There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of '${this.items[i].name}' (price: ${this.items[i].price})`;
+                const liItem = document.createElement('li');
+                liItem.innerHTML = liText;
+                itemList.appendChild(liItem);
+              }
+            }
+          },
+
+          changeQuantity(name, n) {
+            for (var i = 0; i < this.items.length; i++) {
+              if (this.items[i].name == name) {
+                if (n == 0) {
+                  this.items.splice(i, 1);
+                } else {
+                  this.items[i].quantity = n;
+                }
+              }
+            }
+          },
+
+          displayControls() {
+            const basketControls = document.getElementById('basketControls');
+
+            // Добавляем кнопку "очистить корзину"
+            const clearBasketButton = document.createElement('button');
+            clearBasketButton.innerHTML = 'Clear Basket';
+            clearBasketButton.setAttribute('id', 'clearBasket');
+            basketControls.appendChild(clearBasketButton);
+
+            // Добавляем форму для добавления товара в корзину
+            const addItemForm = document.createElement('form');
+            basketControls.appendChild(addItemForm);
+
+            const addItemNameLabel = document.createElement('label');
+            addItemNameLabel.innerHTML = 'Name';
+            addItemForm.appendChild(addItemNameLabel);
+            const addItemNameInput = document.createElement('input');
+            addItemNameLabel.appendChild(addItemNameInput);
+
+            const addItemPriceLabel = document.createElement('label');
+            addItemPriceLabel.innerHTML = 'Price';
+            addItemForm.appendChild(addItemPriceLabel);
+            const addItemPriceInput = document.createElement('input');
+            addItemPriceLabel.appendChild(addItemPriceInput);
+
+            const addItemQuantityLabel = document.createElement('label');
+            addItemQuantityLabel.innerHTML = 'Quantity';
+            addItemForm.appendChild(addItemQuantityLabel);
+            const addItemQuantityInput = document.createElement('input');
+            addItemQuantityInput.setAttribute('type', 'number');
+            addItemQuantityLabel.appendChild(addItemQuantityInput);
+
+            const addItemButton = document.createElement('button');
+            addItemButton.innerHTML = 'Add item';
+            addItemButton.setAttribute('id', 'addItem');
+            addItemForm.appendChild(addItemButton);
+
+            // Добавляем форму для изменения количества товара
+            const changeQuantityForm = document.createElement('form');
+            basketControls.appendChild(changeQuantityForm);
+
+            const changeQuantitySelect = document.createElement('select');
+            changeQuantityForm.appendChild(changeQuantitySelect);
+            for (var i = 0; i < this.items.length; i++) {
+              const changeQuantityOption = document.createElement('option');
+              changeQuantityOption.innerHTML = this.items[i].name;
+              changeQuantitySelect.appendChild(changeQuantityOption);
+            }
+
+            const changeQuantitySpan = document.createElement('span');
+            const curSelectText = changeQuantitySelect.options[changeQuantitySelect.selectedIndex].text;
+            for (var i = 0; i < this.items.length; i++) {
+              if (this.items[i].name == curSelectText) {
+                changeQuantitySpan.innerHTML = `Quantity: ${this.items[i].quantity}`;
+              }
+            }
+            changeQuantityForm.appendChild(changeQuantitySpan);
+
+            const changeQuantityLabel = document.createElement('label');
+            changeQuantityLabel.innerHTML = 'New Quantity';
+            changeQuantityForm.appendChild(changeQuantityLabel);
+            const changeQuantityInput = document.createElement('input');
+            changeQuantityInput.setAttribute('type', 'number');
+            changeQuantityLabel.appendChild(changeQuantityInput);
+
+            const changeQuantityButton = document.createElement('button');
+            changeQuantityButton.innerHTML = 'Change Quantity';
+            changeQuantityButton.setAttribute('id', 'changeQuantity');
+            changeQuantityForm.appendChild(changeQuantityButton);
+
+            // Добавляем форму для удаления товара
+            const removeItemForm = document.createElement('form');
+            basketControls.appendChild(removeItemForm);
+
+            const removeItemSelect = document.createElement('select');
+            removeItemForm.appendChild(removeItemSelect);
+            for (var i = 0; i < this.items.length; i++) {
+              const removeItemOption = document.createElement('option');
+              removeItemOption.innerHTML = this.items[i].name;
+              removeItemSelect.appendChild(removeItemOption);
+            }
+
+            const removeItemButton = document.createElement('button');
+            removeItemButton.innerHTML = 'Remove Item';
+            removeItemButton.setAttribute('id', 'removeItem');
+            removeItemForm.appendChild(removeItemButton);
+          }
+        }
+
+        basket.displayItems();
+        basket.displayControls();
+
+        // Exercise 3
+        /*
+        Не понимаю, что здесь надо сделать, задание невнятно сформулировано.
+        Вроде нечто похожее я уже сделал во втором задании.
+        */
       }
 
       window.onload = wrapperFunc;
@@ -100,7 +341,9 @@
   </head>
   <body>
     <h1>Exercise 1</h1>
-    <div id="chessBoard"></div>
+    <div id='chessBoard'></div>
     <h1>Exercise 2</h1>
+    <div id='basket'></div>
+    <div id='basketControls'></div>
   </body>
 </html>
