@@ -9,7 +9,6 @@
         text-align: center;
       }
       #chessBoard {
-        width: 1002px;
         margin: 0 auto;
         display: flex;
         flex-wrap: wrap;
@@ -160,34 +159,107 @@
     </style>
     <script>
       function wrapperFunc() {
-        // Exercise 1
-        const drawChessBoard = () => {
-          // Создаем родительский элемент и массивы со значениями доски
+        // Exercise 1 (version 1)
+        const chessBoard = {
+          width: 8,
+          height: 8,
+          letterArr: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+
+          // Сделал шахматную доску с динамически задаваемым размером
+          drawChessBoard() {
+            // Создаем родительский элемент и массивы со значениями букв
+            const chessBoard = document.getElementById('chessBoard');
+            chessBoard.style.width = `${this.width + 2}02px`;
+
+            // Пробегаемся по строками
+            for (var i = 0; i < (this.height + 2); i++) {
+              // Пробегаемся по столбцам
+              for (var j = 0; j < (this.width + 2); j++) {
+                // Создаем дочерний элемент и присваиваем ему класс
+                const chessBoardCell = document.createElement('div');
+                chessBoardCell.classList.add('chessBoardCell');
+                // Если первая или последняя строка, то присваиваем ячейкам буквы (но не в первом или последнем столбце)
+                if (i === 0 || i === (this.height + 1)) {
+                  if (!(j === 0) && !(j === (this.width + 1))) {
+                    chessBoardCell.innerHTML = this.letterArr[j - 1];
+                  }
+                  // Если первая строка, то поворачиваем буквы
+                  if (i === 0) {
+                    chessBoardCell.classList.add('rotate');
+                  }
+                // Если четная строка
+                } else if (i % 2 === 0) {
+                  // Если первый и последний столбец, то присваиваем ячейкам цифры (но не в первой или последней строке)
+                  if (j === 0 || j === (this.width + 1)) {
+                    if (!(i === 0) && !(i === (this.height + 1))) {
+                      chessBoardCell.innerHTML = this.height + 1 - i;
+                    }
+                    // Если последний столбец, то поворачиваем цифры
+                    if (j === (this.width + 1)) {
+                      chessBoardCell.classList.add('rotate');
+                    }
+                  // Если строка нечетная, то присваиваем один цвет, если четная - другой
+                  } else if (!(j % 2 === 0)) {
+                    chessBoardCell.classList.add('black');
+                  } else if (j % 2 === 0) {
+                    chessBoardCell.classList.add('beige');
+                  }
+                // Если нечетная строка (здесь тоже самое, только присвоение цвета в обратном порядке)
+                } else if (!(i % 2 === 0)) {
+                  if (j === 0 || j === (this.width + 1)) {
+                    if (!(i === 0) && !(i === (this.height + 1))) {
+                      chessBoardCell.innerHTML = this.height + 1 - i;
+                    }
+                    if (j === (this.width + 1)) {
+                      chessBoardCell.classList.add('rotate');
+                    }
+                  } else if (!(j % 2 === 0)) {
+                    chessBoardCell.classList.add('beige');
+                  } else if (j % 2 === 0) {
+                    chessBoardCell.classList.add('black');
+                  }
+                }
+                chessBoard.appendChild(chessBoardCell);
+              }
+            }
+          },
+        };
+
+        chessBoard.drawChessBoard();
+
+        // Exercise 1 (version 2)
+        // Зачем-то сделал первую версию не через ООП
+        /*const drawChessBoard = (width, height) => {
+          // Создаем родительский элемент и массивы со значениями букв
           const chessBoard = document.getElementById('chessBoard');
-          const letterArr = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', ''];
-          const numArr = ['', 8, 7, 6, 5, 4, 3, 2, 1, ''];
+          chessBoard.style.width = `${width + 2}02px`;
+          const letterArr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
           // Пробегаемся по строками
-          for (var i = 0; i < 10; i++) {
+          for (var i = 0; i < (height + 2); i++) {
             // Пробегаемся по столбцам
-            for (var j = 0; j < 10; j++) {
+            for (var j = 0; j < (width + 2); j++) {
               // Создаем дочерний элемент и присваиваем ему класс
               const chessBoardCell = document.createElement('div');
               chessBoardCell.classList.add('chessBoardCell');
-              // Если первая или последняя строка, то присваиваем ячейкам буквы
-              if (i === 0 || i === 9) {
-                chessBoardCell.innerHTML = letterArr[j];
+              // Если первая или последняя строка, то присваиваем ячейкам буквы (но не в первом или последнем столбце)
+              if (i === 0 || i === (height + 1)) {
+                if (!(j === 0) && !(j === (width + 1))) {
+                  chessBoardCell.innerHTML = letterArr[j - 1];
+                }
                 // Если первая строка, то поворачиваем буквы
                 if (i === 0) {
                   chessBoardCell.classList.add('rotate');
                 }
               // Если четная строка
               } else if (i % 2 === 0) {
-                // Если первый и последний столбец, то присваиваем ячейкам цифры
-                if (j === 0 || j === 9) {
-                  chessBoardCell.innerHTML = numArr[i];
+                // Если первый и последний столбец, то присваиваем ячейкам цифры (но не в первой или последней строке)
+                if (j === 0 || j === (width + 1)) {
+                  if (!(i === 0) && !(i === (height + 1))) {
+                    chessBoardCell.innerHTML = height + 1 - i;
+                  }
                   // Если последний столбец, то поворачиваем цифры
-                  if (j === 9) {
+                  if (j === (width + 1)) {
                     chessBoardCell.classList.add('rotate');
                   }
                 // Если строка нечетная, то присваиваем один цвет, если четная - другой
@@ -198,9 +270,11 @@
                 }
               // Если нечетная строка (здесь тоже самое, только присвоение цвета в обратном порядке)
               } else if (!(i % 2 === 0)) {
-                if (j === 0 || j === 9) {
-                  chessBoardCell.innerHTML = numArr[i];
-                  if (j === 9) {
+                if (j === 0 || j === (width + 1)) {
+                  if (!(i === 0) && !(i === (height + 1))) {
+                    chessBoardCell.innerHTML = height + 1 - i;
+                  }
+                  if (j === (width + 1)) {
                     chessBoardCell.classList.add('rotate');
                   }
                 } else if (!(j % 2 === 0)) {
@@ -214,7 +288,7 @@
           }
         };
 
-        drawChessBoard();
+        //drawChessBoard(8, 8);*/
 
         // Exercise 2
         class Product {
