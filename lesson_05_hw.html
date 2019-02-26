@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Lesson 5 Homework</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <style>
       h1 {
         text-align: center;
@@ -91,6 +92,70 @@
         width: 200px;
         font-size: inherit;
         margin-left: 50px;
+      }
+
+      #dungeonCrawler {
+        width: 1002px;
+        margin: 10px auto 0;
+        position: relative;
+      }
+      #mapContainer {
+        width: 302px;
+        margin: 0 auto 50px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .mapCell {
+        width: 100px;
+        height: 100px;
+      }
+      .unexplored {
+        background-color: darkgray;
+        filter: blur(1px);
+      }
+      .room {
+        background-image: url('http://www.dungeoncreatorsets.com/rpg-dungeons-tiles/dungeon-tile_02_middle_001.jpg');
+        background-size: cover;
+      }
+      .wall {
+        background-image: url('http://www.tomgrill.com/brickwall/perfect_test.jpg');
+      }
+      .player {
+        height: 50px;
+      }
+      #playerStatsDiv {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 10% 0 0 5%;
+        width: 250px;
+        height: 200px;
+      }
+
+      #dungeonCrawlerControls {
+        margin: 10px auto 0;
+        width: 1002px;
+        height: 110px;
+      }
+      #controlsDiv {
+        width: 450px;
+        height: 90px;
+        margin: 10px 0 0 10px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .moveArrow {
+        width: 100px;
+        height: 50px;
+        font-size: 28px;
+      }
+      #messageDiv {
+        margin: 10px 10px 10px 10px;
+        float: right;
+        font-size: 24px;
+        width: 500px;
+        height: 90px;
       }
     </style>
     <script>
@@ -334,6 +399,298 @@
         Не понимаю, что здесь надо сделать, задание невнятно сформулировано.
         Вроде нечто похожее я уже сделал во втором задании.
         */
+
+        // Exercise 01
+        const dungeonCrawlerGame = {
+          map: [
+            [
+              {type: 'room', explored: true, content: null},
+              {type: 'room', explored: false, content: null},
+              {type: 'room', explored: false, content: 'chest'},
+            ],
+            [
+              {type: 'wall', explored: false, content: null},
+              {type: 'room', explored: false, content: null},
+              {type: 'wall', explored: false, content: null},
+            ],
+            [
+              {type: 'room', explored: false, content: 'chest'},
+              {type: 'room', explored: false, content: null},
+              {type: 'room', explored: false, content: 'skeleton'},
+            ]
+          ],
+          player: {
+            position: {x: 0, y: 0},
+            hasPotion: false,
+            attack: 1,
+            hp: 10,
+            choseToRun: false,
+            hasWon: false
+          },
+          chestConentArr: ['potion', 'sword'],
+          skeleton: {
+            hp: 10,
+            attack: 2
+          },
+
+          drawMap() {
+            const dungeonCrawler = document.getElementById('dungeonCrawler');
+
+            const mapText = document.createElement('p');
+            mapText.innerHTML = 'Map of the area';
+            dungeonCrawler.appendChild(mapText);
+
+            const mapContainer = document.createElement('div');
+            mapContainer.setAttribute('id', 'mapContainer');
+            dungeonCrawler.appendChild(mapContainer);
+
+            for (var i = 0; i < this.map.length; i++) {
+              for (var j = 0; j < this.map[i].length; j++) {
+                const mapCell = document.createElement('div');
+                mapCell.classList.add('mapCell');
+                if (!this.map[i][j].explored) {
+                  mapCell.classList.add('unexplored');
+                } else {
+                  switch (this.map[i][j].type) {
+                    case 'room':
+                      mapCell.classList.add('room');
+                      break;
+                    case 'wall':
+                      mapCell.classList.add('wall');
+                      break;
+                  }
+                }
+                mapContainer.appendChild(mapCell);
+                if (i === y && j === x) {
+                  const playerImg = document.createElement('img');
+                  playerImg.src = 'http://pixelartmaker.com/art/4fe55c1d90ee939.png';
+                  playerImg.classList.add('player');
+                  mapCell.appendChild(playerImg);
+                }
+              }
+            }
+
+            const playerStatsDiv = document.createElement('div');
+            playerStatsDiv.setAttribute('id', 'playerStatsDiv');
+            dungeonCrawler.appendChild(playerStatsDiv);
+            const hp = document.createElement('p');
+            hp.innerHTML = `Your HP: ${this.player.hp}/10`;
+            playerStatsDiv.appendChild(hp);
+          },
+
+          drawControls() {
+            const ArrowArr = [
+              '<i class="fas fa-arrow-up"></i>',
+              '<i class="fas fa-arrow-right"></i>',
+              '<i class="fas fa-arrow-left"></i>',
+              '<i class="fas fa-arrow-down"></i>',
+            ];
+
+            const controlsDiv = document.createElement('div');
+            controlsDiv.setAttribute('id', 'controlsDiv');
+            dungeonCrawlerControls.appendChild(controlsDiv);
+            for (var i = 0; i < ArrowArr.length; i++) {
+              const moveArrow = document.createElement('button');
+              moveArrow.classList.add('moveArrow');
+              moveArrow.innerHTML = ArrowArr[i];
+              controlsDiv.appendChild(moveArrow);
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = 'To win the game defeat the enemy';
+            messageDiv.setAttribute('id', 'messageDiv');
+            dungeonCrawlerControls.appendChild(messageDiv);
+          },
+
+          movePlayer() {
+            let direction = prompt('Where would you want to go? (up, down, left, right)');
+            while (direction != 'up' && direction != 'down' && direction != 'right' && direction != 'left') {
+              direction = prompt('Enter one of possible directions (up, down, left, right)');
+            }
+            switch (direction) {
+              case 'up':
+                if (y - 1 < 0) {
+                  alert('You can\'t go there');
+                } else {
+                  y--;
+                  this.map[y][x].explored = true;
+                }
+
+                if (this.map[y][x].type == 'wall') {
+                  alert('You\'ve hit a wall');
+                  y++;
+                }
+                break;
+              case 'down':
+                if (y + 1 > 2) {
+                  alert('You can\'t go there');
+                } else {
+                  y++;
+                  this.map[y][x].explored = true;
+                }
+
+                if (this.map[y][x].type == 'wall') {
+                  alert('You\'ve hit a wall');
+                  y--;
+                }
+                break;
+              case 'left':
+                if (x - 1 < 0) {
+                  alert('You can\'t go there');
+                } else {
+                  x--;
+                  this.map[y][x].explored = true;
+                }
+
+                if (this.map[y][x].type == 'wall') {
+                  alert('You\'ve hit a wall');
+                  x++;
+                }
+                break;
+              case 'right':
+                if (x + 1 > 2) {
+                  alert('You can\'t go there');
+                } else {
+                  x++;
+                  this.map[y][x].explored = true;
+                }
+
+                if (this.map[y][x].type == 'wall') {
+                  alert('You\'ve hit a wall');
+                  x--;
+                }
+                break;
+            }
+          },
+
+          interactWithContent() {
+            if (this.map[y][x].content == 'chest') {
+              this.lootChest();
+              this.map[y][x].content = null;
+            } else if (this.map[y][x].content == 'skeleton') {
+              this.fightSkeleton();
+              this.map[y][x].content = null;
+            }
+          },
+
+          lootChest() {
+            alert('In this room you\'ve found a chest!');
+            const chestContent = this.determineChestContent();
+            if (chestContent == 'potion') {
+              this.player.hasPotion = true;
+              alert('You\'ve found a healing potion');
+            } else if (chestContent == 'sword') {
+              this.player.attack += 2;
+              alert('You\'ve found a good sword. You\'ve gained 2 attack');
+            }
+          },
+
+          determineChestContent() {
+            const rndPosition = Math.floor(Math.random() * this.chestConentArr.length);
+            const chestContent = this.chestConentArr[rndPosition];
+            this.chestConentArr.splice(rndPosition, 1);
+            return chestContent;
+          },
+
+          fightSkeleton() {
+            alert('In this room you\'ve found a menacing skeleton');
+            while (this.player.hp > 0 && this.skeleton.hp > 0) {
+              this.playerBattleTurn();
+              if (this.player.choseToRun) {
+                this.player.choseToRun = false;
+                return;
+              }
+              this.skeletonBattleTurn();
+            }
+
+            if (this.player.hp <= 0) {
+              alert('Skeleton cuts off your head!');
+            } else if (this.skeleton.hp <= 0) {
+              alert('You\'ve defeated the evil skeleton!');
+              this.player.hasWon = true;
+            }
+          },
+
+          playerBattleTurn() {
+            const action = prompt(`Your HP: ${this.player.hp}\nSkeleton's HP: ${this.skeleton.hp}\nTo attack enter a\nTo drink potion enter p\nTo run press r`);
+            if (action == 'a') {
+              alert('You swing your sword wildly');
+              const isHit = this.isHit();
+              if (isHit) {
+                alert('You\'ve hit the skeleton');
+                this.skeleton.hp -= this.player.attack;
+              } else {
+                alert('You\'ve missed the skeleton');
+              }
+            } else if (action == 'p') {
+              if (this.player.hasPotion) {
+                alert('The potion invigorates you. You\'ve gained 3 HP')
+                this.player.hp += 3;
+                if (this.player.hp > 10) {
+                  this.player.hp = 10;
+                }
+                this.player.hasPotion = false;
+              } else {
+                alert('You have no potion to drink');
+              }
+            } else if (action == 'r') {
+              alert('You\'ve chosen to run');
+              x--;
+              this.player.choseToRun = true;
+              return;
+            } else {
+              alert('You\'ve lost your wits and do nothing');
+            }
+          },
+
+          skeletonBattleTurn() {
+            alert('Skeleton attacks you!');
+            const isHit = this.isHit();
+            if (isHit) {
+              alert('It hits you');
+              this.player.hp -= this.skeleton.attack;
+            } else {
+              alert('It misses');
+            }
+          },
+
+          isHit() {
+            return Math.random() >= 0.3;
+          },
+
+          turn() {
+            alert('To win the game defeat the enemy');
+            while (true) {
+              this.drawMap();
+              this.movePlayer();
+              this.interactWithContent();
+              if (this.player.hasWon || this.player.hp <= 0) {
+                break;
+              }
+              toQuit = prompt('To quit the game press q');
+              if (toQuit == 'q') {
+                return;
+              }
+            }
+
+            this.endGame();
+          },
+
+          endGame() {
+            if (this.player.hasWon) {
+              alert('You\'ve won the game!');
+            } else {
+              alert('You\'ve lost the game and died');
+            }
+          }
+        }
+
+        // Destructuring
+        let { player: {position: {x}} } = dungeonCrawlerGame;
+        let { player: {position: {y}} } = dungeonCrawlerGame;
+
+        dungeonCrawlerGame.drawMap();
+        dungeonCrawlerGame.drawControls();
       }
 
       window.onload = wrapperFunc;
@@ -345,5 +702,8 @@
     <h1>Exercise 2</h1>
     <div id='basket'></div>
     <div id='basketControls'></div>
+    <h1>Exercise 01</h1>
+    <div id='dungeonCrawler'></div>
+    <div id='dungeonCrawlerControls'></div>
   </body>
 </html>
