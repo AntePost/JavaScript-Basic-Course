@@ -34,6 +34,18 @@
         background-color: beige;
       }
 
+      #chessBoardControls {
+        width: 1002px;
+        margin: 10px auto 0;
+        display: flex;
+        justify-content: center;
+      }
+      #generateChessBoard {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+      }
+
       #basket {
         width: 1002px;
         margin: 0 auto;
@@ -223,9 +235,34 @@
               }
             }
           },
+
+          drawChessBoardControls() {
+            const chessBoardControls = document.getElementById('chessBoardControls')
+
+            const chessBoardControlsForm = document.createElement('form');
+            chessBoardControls.appendChild(chessBoardControlsForm);
+
+            const labelForHeight = document.createElement('label');
+            labelForHeight.innerHTML = 'Set height';
+            chessBoardControlsForm.appendChild(labelForHeight);
+            const inputForHeight = document.createElement('input');
+            labelForHeight.appendChild(inputForHeight);
+
+            const labelForWidth = document.createElement('label');
+            labelForWidth.innerHTML = 'Set width';
+            chessBoardControlsForm.appendChild(labelForWidth);
+            const inputForWidth = document.createElement('input');
+            labelForWidth.appendChild(inputForWidth);
+
+            const generateChessBoard = document.createElement('button');
+            generateChessBoard.innerHTML = 'Generate Chessboard';
+            generateChessBoard.setAttribute('id', 'generateChessBoard');
+            chessBoardControlsForm.appendChild(generateChessBoard);
+          },
         };
 
         chessBoard.drawChessBoard();
+        chessBoard.drawChessBoardControls();
 
         // Exercise 1 (version 2)
         // Зачем-то сделал первую версию не через ООП
@@ -773,6 +810,7 @@
   <body>
     <h1>Exercise 1</h1>
     <div id='chessBoard'></div>
+    <div id='chessBoardControls'></div>
     <h1>Exercise 2</h1>
     <div id='basket'></div>
     <div id='basketControls'></div>
