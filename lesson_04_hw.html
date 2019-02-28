@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Lesson 4 Homework</title>
+  </head>
+  <body>
+    <script>
+      // Exercise 01
+      // Написал простенький dungeon crawler.
+      const dungeonCrawlerGame = {
+        map: [
+          [
+            {type: 'room', explored: true, content: null},
+            {type: 'room', explored: false, content: null},
+            {type: 'room', explored: false, content: 'chest'},
+          ],
+          [
+            {type: 'wall', explored: false, content: null},
+            {type: 'room', explored: false, content: null},
+            {type: 'wall', explored: false, content: null},
+          ],
+          [
+            {type: 'room', explored: false, content: 'chest'},
+            {type: 'room', explored: false, content: null},
+            {type: 'room', explored: false, content: 'skeleton'},
+          ]
+        ],
+        player: {
+          position: {x: 0, y: 0},
+          hasPotion: false,
+          attack: 1,
+          hp: 10,
+          choseToRun: false,
+          hasWon: false
+        },
+        chestConentArr: ['potion', 'sword'],
+        skeleton: {
+          hp: 10,
+          attack: 2
+        },
+
+        drawMap() {
+          let mapStr = 'The map of the area:\nP - player, X - unexplored, R - room, W - wall';
+          for (var i = 0; i < 3; i++) {
+            mapStr += '\n';
+            for (var j = 0; j < 3; j++) {
+              if (x == j && y == i) {
+                mapStr += '[P ]'; // Puts player on the map
+              } else if (!this.map[i][j].explored) {
+                mapStr += '[X ]';
+              } else {
+                switch (this.map[i][j].type) {
+                  case 'room':
+                    mapStr += '[R ]';
+                    break;
+                  case 'wall':
+                    mapStr += '[W]';
+                    break;
+                }
+              }
+            }
+          }
+          alert(mapStr);
+        },
+
+        movePlayer() {
+          let direction = prompt('Where would you want to go? (up, down, left, right)');
+          while (direction != 'up' && direction != 'down' && direction != 'right' && direction != 'left') {
+            direction = prompt('Enter one of possible directions (up, down, left, right)');
+          }
+          switch (direction) {
+            case 'up':
+              if (y - 1 < 0) {
+                alert('You can\'t go there');
+              } else {
+                y--;
+                this.map[y][x].explored = true;
+              }
+
+              if (this.map[y][x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                y++;
+              }
+              break;
+            case 'down':
+              if (y + 1 > 2) {
+                alert('You can\'t go there');
+              } else {
+                y++;
+                this.map[y][x].explored = true;
+              }
+
+              if (this.map[y][x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                y--;
+              }
+              break;
+            case 'left':
+              if (x - 1 < 0) {
+                alert('You can\'t go there');
+              } else {
+                x--;
+                this.map[y][x].explored = true;
+              }
+
+              if (this.map[y][x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                x++;
+              }
+              break;
+            case 'right':
+              if (x + 1 > 2) {
+                alert('You can\'t go there');
+              } else {
+                x++;
+                this.map[y][x].explored = true;
+              }
+
+              if (this.map[y][x].type == 'wall') {
+                alert('You\'ve hit a wall');
+                x--;
+              }
+              break;
+          }
+        },
+
+        interactWithContent() {
+          if (this.map[y][x].content == 'chest') {
+            this.lootChest();
+            this.map[y][x].content = null;
+          } else if (this.map[y][x].content == 'skeleton') {
+            this.fightSkeleton();
+            this.map[y][x].content = null;
+          }
+        },
+
+        lootChest() {
+          alert('In this room you\'ve found a chest!');
+          const chestContent = this.determineChestContent();
+          if (chestContent == 'potion') {
+            this.player.hasPotion = true;
+            alert('You\'ve found a healing potion');
+          } else if (chestContent == 'sword') {
+            this.player.attack += 2;
+            alert('You\'ve found a good sword. You\'ve gained 2 attack');
+          }
+        },
+
+        determineChestContent() {
+          const rndPosition = Math.floor(Math.random() * this.chestConentArr.length);
+          const chestContent = this.chestConentArr[rndPosition];
+          this.chestConentArr.splice(rndPosition, 1);
+          return chestContent;
+        },
+
+        fightSkeleton() {
+          alert('In this room you\'ve found a menacing skeleton');
+          while (this.player.hp > 0 && this.skeleton.hp > 0) {
+            this.playerBattleTurn();
+            if (this.player.choseToRun) {
+              this.player.choseToRun = false;
+              return;
+            }
+            this.skeletonBattleTurn();
+          }
+
+          if (this.player.hp <= 0) {
+            alert('Skeleton cuts off your head!');
+          } else if (this.skeleton.hp <= 0) {
+            alert('You\'ve defeated the evil skeleton!');
+            this.player.hasWon = true;
+          }
+        },
+
+        playerBattleTurn() {
+          const action = prompt(`Your HP: ${this.player.hp}\nSkeleton's HP: ${this.skeleton.hp}\nTo attack enter a\nTo drink potion enter p\nTo run press r`);
+          if (action == 'a') {
+            alert('You swing your sword wildly');
+            const isHit = this.isHit();
+            if (isHit) {
+              alert('You\'ve hit the skeleton');
+              this.skeleton.hp -= this.player.attack;
+            } else {
+              alert('You\'ve missed the skeleton');
+            }
+          } else if (action == 'p') {
+            if (this.player.hasPotion) {
+              alert('The potion invigorates you. You\'ve gained 3 HP')
+              this.player.hp += 3;
+              if (this.player.hp > 10) {
+                this.player.hp = 10;
+              }
+              this.player.hasPotion = false;
+            } else {
+              alert('You have no potion to drink');
+            }
+          } else if (action == 'r') {
+            alert('You\'ve chosen to run');
+            x--;
+            this.player.choseToRun = true;
+            return;
+          } else {
+            alert('You\'ve lost your wits and do nothing');
+          }
+        },
+
+        skeletonBattleTurn() {
+          alert('Skeleton attacks you!');
+          const isHit = this.isHit();
+          if (isHit) {
+            alert('It hits you');
+            this.player.hp -= this.skeleton.attack;
+          } else {
+            alert('It misses');
+          }
+        },
+
+        isHit() {
+          return Math.random() >= 0.3;
+        },
+
+        turn() {
+          alert('To win the game defeat the enemy');
+          while (true) {
+            this.drawMap();
+            this.movePlayer();
+            this.interactWithContent();
+            if (this.player.hasWon || this.player.hp <= 0) {
+              break;
+            }
+            toQuit = prompt('To quit the game press q');
+            if (toQuit == 'q') {
+              return;
+            }
+          }
+
+          this.endGame();
+        },
+
+        endGame() {
+          if (this.player.hasWon) {
+            alert('You\'ve won the game!');
+          } else {
+            alert('You\'ve lost the game and died');
+          }
+        }
+      }
+
+      // Destructuring
+      let { player: {position: {x}} } = dungeonCrawlerGame;
+      let { player: {position: {y}} } = dungeonCrawlerGame;
+
+      dungeonCrawlerGame.turn();
+
+      // Exercise 02
+      const millionaireGame = {
+        questionsDB: [
+          {
+            quesText: 'Как правильно закончить пословицу: «Не откладывай на завтра то, что можно…»?',
+            answers: ['сделать сегодня', 'сделать послезавтра', 'сделать через месяц', 'никогда не делать'],
+            correct: 0,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Что говорит человек, когда замечает нечто необычное?',
+            answers: ['попало в лоб', 'залетело в рот', 'накапало в уши', 'бросилось в глаза'],
+            correct: 3,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Что помогает туристу ориентироваться в незнакомом городе?',
+            answers: ['путепровод', 'путеукладчик', 'путеводитель', 'путеводная звезда'],
+            correct: 2,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Какой наряд прославил баснописец Крылов?',
+            answers: ['тришкин кафтан', 'ивашкин армяк', 'прошкин зипун', 'машкин сарафан'],
+            correct: 0,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Как звали старшую сестру императора Петра Первого?',
+            answers: ['Вера', 'Надежда', 'Любовь', 'Софья'],
+            correct: 3,
+            difficulty: 'easy',
+          },
+          {
+            quesText: 'Что не бывает морским?',
+            answers: ['рельс', 'огурец', 'гребешок', 'узел'],
+            correct: 0,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Кого с большим основанием можно назвать островитянами?',
+            answers: ['алеутов', 'эвенков', 'чукчей', 'якутов'],
+            correct: 0,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'В какой стране появилась мандолина?',
+            answers: ['Испания', 'Италия', 'Венгрия', 'Греция'],
+            correct: 1,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Как жители Лондона прозвали небоскреб Мэри-Экс, спроектированный Норманом Фостером?',
+            answers: ['«корнишон»', '«баклажан»', '«кабачок»', '«патиссон»'],
+            correct: 0,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Какой врач первым в истории русской медицины применил гипсовую повязку?',
+            answers: ['Субботин', 'Пирогов', 'Боткин', 'Склифосовский'],
+            correct: 1,
+            difficulty: 'medium',
+          },
+          {
+            quesText: 'Где в Древней Греции можно было увидеть надпись: «Здесь живут мертвые и говорят немые»?',
+            answers: ['на кладбищах', 'в больницах', 'в библиотеках', 'в тюрьмах'],
+            correct: 2,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'Кто был одним из авторов сценария фильма «Музыкальная история» с Сергеем Лемешевым в главной роли?',
+            answers: ['Илья Ильф', 'Евгений Петров', 'Михаил Зощенко', 'Аркадий Аверченко'],
+            correct: 1,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'С чем часто охотятся на рыбу протоптера между сезонами дождей?',
+            answers: ['с сетями', 'с сачками', 'с ружьями', 'с лопатами'],
+            correct: 3,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'Каким видом спорта серьезно увлекался французский летчик Ролан Гаррос?',
+            answers: ['пинг-понгом', 'поло', 'гольфом', 'регби'],
+            correct: 3,
+            difficulty: 'hard',
+          },
+          {
+            quesText: 'Что такое лобогрейка?',
+            answers: ['жнейка', 'шапка', 'болезнь', 'печка'],
+            correct: 0,
+            difficulty: 'hard',
+          },
+        ],
+
+        questionSet: [],
+
+        intialPrize: 100,
+
+        prizesArr: [],
+
+        nOfQuestions: {
+          easy: 3,
+          medium: 3,
+          hard: 3
+        },
+
+        get fixedPositions() {
+          return [this.nOfQuestions.easy - 1, this.nOfQuestions.easy + this.nOfQuestions.medium - 1, this.nOfQuestions.easy + this.nOfQuestions.medium + this.nOfQuestions.hard - 1];
+        },
+
+        fillPrizesArr() {
+          const nOfQuestions = Object.values(this.nOfQuestions).reduce((acc, cur) => acc + cur);
+          let prize = this.intialPrize;
+          for (var i = 0; i < nOfQuestions; i++) {
+            if (i === 0) {
+              // pass
+            } else if (i % 2 !== 0) {
+              prize *= 5;
+            } else if (i % 2 === 0) {
+              prize *= 2;
+            }
+            this.prizesArr.push(prize);
+          }
+        },
+
+        buildQuestionSet() {
+          let arrByDiffic;
+          this.buildDifficultyBlock('easy', 0);
+          this.buildDifficultyBlock('medium', this.nOfQuestions.easy);
+          this.buildDifficultyBlock('hard', this.nOfQuestions.easy + this.nOfQuestions.medium);
+        },
+
+        buildDifficultyBlock(difficulty, n) {
+          arrByDiffic = this.questionsDB.filter(el => el.difficulty === difficulty);
+          for (var i = n; i < n + 3; i++) {
+            const rndInt = Math.floor(Math.random() * arrByDiffic.length);
+            const question = this.buildQuestion(arrByDiffic[rndInt], this.prizesArr[i], i);
+            this.questionSet.push(question);
+            arrByDiffic.splice(rndInt, 1);
+          }
+        },
+
+        buildQuestion(obj, prize, i) {
+          const question = {
+            quesText: obj.quesText,
+            answers: obj.answers,
+            correct: obj.correct,
+            prize: prize,
+            fixed: this.fixedPositions.includes(i) ? true : false,
+          };
+          return question;
+        },
+
+        buildQuestionText(obj, i) {
+          let text = `Вопрос №${i + 1} на ${obj.prize} рублей${obj.fixed ? ' (несгораемая сумма)' : ''}:\n\n${obj.quesText}`;
+          const ansArr = Array.from(obj.answers);
+          let nOfCorrect;
+
+          for (var i = 0; i < obj.answers.length; i++) {
+            const rndInt = Math.floor(Math.random() * ansArr.length);
+            text += `\n${i + 1}) ${ansArr[rndInt]}`;
+            if (ansArr[rndInt] === obj.answers[obj.correct]) {
+              nOfCorrect = i;
+            }
+            ansArr.splice(rndInt, 1);
+          }
+          text += `\n\nВведите номер правильного ответа`
+          return [text, nOfCorrect];
+        },
+
+        playGame() {
+          this.fillPrizesArr();
+          this.buildQuestionSet();
+          let finalPrize = 0;
+          for (var i = 0; i < this.questionSet.length; i++) {
+            const textAndNOfCorrect = this.buildQuestionText(this.questionSet[i], i)
+            const answer = +prompt(textAndNOfCorrect[0]);
+            if (textAndNOfCorrect[1] == answer - 1) {
+              alert(`Правильно. Сумма выигрыша составила ${this.questionSet[i].prize}`);
+              if (this.questionSet[i].fixed) {
+                finalPrize = this.questionSet[i].prize;
+              }
+              if (i === 8) {
+                alert('Поздравляем, вы выиграли!')
+              }
+            } else {
+              alert(`Увы, вы проиграли. Сумма вашего выигрыша составила ${finalPrize} рублей`);
+              break;
+            }
+          }
+
+          const playAgain = +prompt('Чтобы сыграть еще один раудн, нажмите 1\n');
+          if (playAgain == 1) {
+            this.playGame();
+          }
+        },
+      }
+
+      millionaireGame.playGame();
+
+      // Exercise 1
+      const convertNumToObj = (n) => {
+        if (n < 0 || n > 999) {
+          console.log(`Number ${n} is outside of range`);
+          return {};
+        } else {
+          let obj = {};
+          nStr = n.toString();
+
+          if (nStr.length < 3) {
+            nStr = nStr.padStart(3, '0');
+          }
+
+          obj.ones = +nStr[2];
+          obj.tens = +nStr[1];
+          obj.hundreds = +nStr[0];
+
+          console.log(`Number ${n} consists of:`);
+          console.log(obj);
+          return obj;
+        }
+      }
+
+      console.log('Exercise 1:');
+      convertNumToObj(-5);
+      convertNumToObj(1234);
+      convertNumToObj(1);
+      convertNumToObj(23);
+      convertNumToObj(456);
+
+      // Exercise 2
+      class Product {
+        constructor(name, price, quantity) {
+          this.name = name;
+          this.price = price;
+          this.quantity = quantity;
+        }
+      }
+
+      const basket = {
+        currency: 'usd',
+        items: [
+          {name: 'Product 1', price: 500, quantity: 1},
+          {name: 'Product 2', price: 200, quantity: 2},
+          {name: 'Product 3', price: 100, quantity: 3},
+        ],
+
+        countBasketPrice() {
+          let sum = this.items.reduce((acc, cur) => {
+            return acc + cur.price * cur.quantity;
+          }, 0);
+          return sum;
+        },
+
+        clearBasket() {
+          this.items = [];
+        },
+
+        addItemToBasket(name, price, quantity) {
+          this.items.push(new Product(name, price, quantity));
+        },
+
+        removeItemFromBasket(name) {
+          for (var i = 0; i < this.items.length; i++) {
+            if (this.items[i].name == name) {
+              this.items.splice(i, 1);
+            }
+          }
+        },
+
+        displayItemsInConsole() {
+          for (var i = 0; i < this.items.length; i++) {
+            console.log(`There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of ${this.items[i].name} (price: ${this.items[i].price}) in the basket.`);
+          }
+        },
+
+        changeQuantity(name, n) {
+          for (var i = 0; i < this.items.length; i++) {
+            if (this.items[i].name == name) {
+              if (n == 0) {
+                this.items.splice(i, 1);
+              } else {
+                this.items[i].quantity = n;
+              }
+            }
+          }
+        }
+      }
+
+      console.log('Exercise 2:');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
+      console.log('---');
+      console.log('Clearing the basket');
+      basket.clearBasket();
+      console.log('Adding new items');
+      basket.addItemToBasket('Product 4', 1000, 1);
+      basket.addItemToBasket('Product 5', 1500, 2);
+      basket.addItemToBasket('Product 6', 2000, 3);
+      console.log('---');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
+      console.log('---');
+      console.log('Removing second item');
+      basket.removeItemFromBasket('Product 5');
+      console.log('---');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
+      console.log('---');
+      console.log('Changing quantity of Product 4 to 5 items');
+      basket.changeQuantity('Product 4', 5);
+      console.log('Changing quantity of Product 6 to 0 items');
+      basket.changeQuantity('Product 6', 0);
+      console.log('---');
+      basket.displayItemsInConsole();
+      console.log(`Sum total of chosen products is ${basket.countBasketPrice()} ${basket.currency.toUpperCase()}.`);
+
+      // Exercise 3
+      /*
+      Честно говоря, не знаю, что тут написать, задание сформулировано невнятно.
+      В магазине должна быть сущность корзины, в которой лежат сущности продуктов.
+      Должна быть сущность каталога, в котором тоже лежат продукты.
+      Сущность продукта должна иметь свойства и методы, которые позволяют выводить информацию на странице с этим продуктом.
+      Без конкретики сложно рассуждать.
+      */
+    </script>
+  </body>
+</html>
