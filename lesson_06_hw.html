@@ -171,119 +171,7 @@
     </style>
     <script>
       function wrapperFunc() {
-        // Exercise 1 (version 1)
-        const chessBoard = {
-          width: 8,
-          height: 8,
-          letterArr: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
-
-          // Сделал шахматную доску с динамически задаваемым размером
-          drawChessBoard() {
-            // Создаем родительский элемент и задаем ему динамическую ширину
-            const $chessBoard = document.getElementById('chessBoard');
-            $chessBoard.innerHTML = '';
-            $chessBoard.style.width = `${this.width + 2}02px`;
-
-            // Пробегаемся по строками
-            for (var i = 0; i < (this.height + 2); i++) {
-              // Пробегаемся по столбцам
-              for (var j = 0; j < (this.width + 2); j++) {
-                // Создаем дочерний элемент и присваиваем ему класс
-                const $chessBoardCell = document.createElement('div');
-                $chessBoardCell.classList.add('chessBoardCell');
-                // Если первая или последняя строка, то присваиваем ячейкам буквы (но не в первом или последнем столбце)
-                if (i === 0 || i === (this.height + 1)) {
-                  if (!(j === 0) && !(j === (this.width + 1))) {
-                    $chessBoardCell.innerHTML = this.letterArr[j - 1];
-                  }
-                  // Если первая строка, то поворачиваем буквы
-                  if (i === 0) {
-                    $chessBoardCell.classList.add('rotate');
-                  }
-                // Если четная строка
-                } else if (i % 2 === 0) {
-                  // Если первый и последний столбец, то присваиваем ячейкам цифры (но не в первой или последней строке)
-                  if (j === 0 || j === (this.width + 1)) {
-                    if (!(i === 0) && !(i === (this.height + 1))) {
-                      $chessBoardCell.innerHTML = this.height + 1 - i;
-                    }
-                    // Если последний столбец, то поворачиваем цифры
-                    if (j === (this.width + 1)) {
-                      $chessBoardCell.classList.add('rotate');
-                    }
-                  // Если строка нечетная, то присваиваем один цвет, если четная - другой
-                  } else if (!(j % 2 === 0)) {
-                    $chessBoardCell.classList.add('black');
-                  } else if (j % 2 === 0) {
-                    $chessBoardCell.classList.add('beige');
-                  }
-                // Если нечетная строка (здесь тоже самое, только присвоение цвета в обратном порядке)
-                } else if (!(i % 2 === 0)) {
-                  if (j === 0 || j === (this.width + 1)) {
-                    if (!(i === 0) && !(i === (this.height + 1))) {
-                      $chessBoardCell.innerHTML = this.height + 1 - i;
-                    }
-                    if (j === (this.width + 1)) {
-                      $chessBoardCell.classList.add('rotate');
-                    }
-                  } else if (!(j % 2 === 0)) {
-                    $chessBoardCell.classList.add('beige');
-                  } else if (j % 2 === 0) {
-                    $chessBoardCell.classList.add('black');
-                  }
-                }
-                $chessBoard.appendChild($chessBoardCell);
-              }
-            }
-          },
-
-          drawChessBoardControls() {
-            const $chessBoardControls = document.getElementById('chessBoardControls')
-
-            const $chessBoardControlsForm = document.createElement('form');
-            $chessBoardControls.appendChild($chessBoardControlsForm);
-
-            const $labelForHeight = document.createElement('label');
-            $labelForHeight.innerHTML = 'Set height';
-            $chessBoardControlsForm.appendChild($labelForHeight);
-            const $inputForHeight = document.createElement('input');
-            $inputForHeight.setAttribute('id', 'inputForHeight');
-            $inputForHeight.setAttribute('type', 'number');
-            $labelForHeight.appendChild($inputForHeight);
-
-            const $labelForWidth = document.createElement('label');
-            $labelForWidth.innerHTML = 'Set width';
-            $chessBoardControlsForm.appendChild($labelForWidth);
-            const $inputForWidth = document.createElement('input');
-            $inputForWidth.setAttribute('id', 'inputForWidth');
-            $inputForWidth.setAttribute('type', 'number');
-            $labelForWidth.appendChild($inputForWidth);
-
-            const $generateChessBoard = document.createElement('button');
-            $generateChessBoard.innerHTML = 'Generate Chessboard';
-            $generateChessBoard.setAttribute('id', 'generateChessBoard');
-            $chessBoardControlsForm.appendChild($generateChessBoard);
-            $generateChessBoard.addEventListener('click', this.generateChessBoard);
-          },
-
-          generateChessBoard(event) {
-            event.preventDefault();
-            const width = +document.getElementById('inputForWidth').value;
-            const height = +document.getElementById('inputForHeight').value;
-            if (width < 1 || width > 12 || height < 1 || height > 12) {
-              alert('Width and height must be between 1 and 12');
-            } else {
-              chessBoard.width = width;
-              chessBoard.height = height;
-              chessBoard.drawChessBoard();
-            }
-          }
-        };
-
-        chessBoard.drawChessBoard();
-        chessBoard.drawChessBoardControls();
-
-        // Exercise 2
+        // Exercises 1 & 2
         class Product {
           constructor(name, price, quantity) {
             this.name = name;
@@ -523,13 +411,6 @@
 
         basket.displayItems();
         basket.displayControls();
-
-        // Exercise 3
-        /*
-        Весь каталог делать через команды JS - это слишком много бессмысленной работы.
-        Поэтому это задание я пропустил.
-        Думаю, что остальные задания дали достаточно практики в этом аспекте языка.
-        */
 
         // Exercise 01
         const dungeonCrawlerGame = {
@@ -824,20 +705,132 @@
 
         dungeonCrawlerGame.drawMap();
         dungeonCrawlerGame.drawControls();
+
+        // Exercise 02
+        const chessBoard = {
+          width: 8,
+          height: 8,
+          letterArr: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+
+          // Сделал шахматную доску с динамически задаваемым размером
+          drawChessBoard() {
+            // Создаем родительский элемент и задаем ему динамическую ширину
+            const $chessBoard = document.getElementById('chessBoard');
+            $chessBoard.innerHTML = '';
+            $chessBoard.style.width = `${this.width + 2}02px`;
+
+            // Пробегаемся по строками
+            for (var i = 0; i < (this.height + 2); i++) {
+              // Пробегаемся по столбцам
+              for (var j = 0; j < (this.width + 2); j++) {
+                // Создаем дочерний элемент и присваиваем ему класс
+                const $chessBoardCell = document.createElement('div');
+                $chessBoardCell.classList.add('chessBoardCell');
+                // Если первая или последняя строка, то присваиваем ячейкам буквы (но не в первом или последнем столбце)
+                if (i === 0 || i === (this.height + 1)) {
+                  if (!(j === 0) && !(j === (this.width + 1))) {
+                    $chessBoardCell.innerHTML = this.letterArr[j - 1];
+                  }
+                  // Если первая строка, то поворачиваем буквы
+                  if (i === 0) {
+                    $chessBoardCell.classList.add('rotate');
+                  }
+                // Если четная строка
+                } else if (i % 2 === 0) {
+                  // Если первый и последний столбец, то присваиваем ячейкам цифры (но не в первой или последней строке)
+                  if (j === 0 || j === (this.width + 1)) {
+                    if (!(i === 0) && !(i === (this.height + 1))) {
+                      $chessBoardCell.innerHTML = this.height + 1 - i;
+                    }
+                    // Если последний столбец, то поворачиваем цифры
+                    if (j === (this.width + 1)) {
+                      $chessBoardCell.classList.add('rotate');
+                    }
+                  // Если строка нечетная, то присваиваем один цвет, если четная - другой
+                  } else if (!(j % 2 === 0)) {
+                    $chessBoardCell.classList.add('black');
+                  } else if (j % 2 === 0) {
+                    $chessBoardCell.classList.add('beige');
+                  }
+                // Если нечетная строка (здесь тоже самое, только присвоение цвета в обратном порядке)
+                } else if (!(i % 2 === 0)) {
+                  if (j === 0 || j === (this.width + 1)) {
+                    if (!(i === 0) && !(i === (this.height + 1))) {
+                      $chessBoardCell.innerHTML = this.height + 1 - i;
+                    }
+                    if (j === (this.width + 1)) {
+                      $chessBoardCell.classList.add('rotate');
+                    }
+                  } else if (!(j % 2 === 0)) {
+                    $chessBoardCell.classList.add('beige');
+                  } else if (j % 2 === 0) {
+                    $chessBoardCell.classList.add('black');
+                  }
+                }
+                $chessBoard.appendChild($chessBoardCell);
+              }
+            }
+          },
+
+          drawChessBoardControls() {
+            const $chessBoardControls = document.getElementById('chessBoardControls')
+
+            const $chessBoardControlsForm = document.createElement('form');
+            $chessBoardControls.appendChild($chessBoardControlsForm);
+
+            const $labelForHeight = document.createElement('label');
+            $labelForHeight.innerHTML = 'Set height';
+            $chessBoardControlsForm.appendChild($labelForHeight);
+            const $inputForHeight = document.createElement('input');
+            $inputForHeight.setAttribute('id', 'inputForHeight');
+            $inputForHeight.setAttribute('type', 'number');
+            $labelForHeight.appendChild($inputForHeight);
+
+            const $labelForWidth = document.createElement('label');
+            $labelForWidth.innerHTML = 'Set width';
+            $chessBoardControlsForm.appendChild($labelForWidth);
+            const $inputForWidth = document.createElement('input');
+            $inputForWidth.setAttribute('id', 'inputForWidth');
+            $inputForWidth.setAttribute('type', 'number');
+            $labelForWidth.appendChild($inputForWidth);
+
+            const $generateChessBoard = document.createElement('button');
+            $generateChessBoard.innerHTML = 'Generate Chessboard';
+            $generateChessBoard.setAttribute('id', 'generateChessBoard');
+            $chessBoardControlsForm.appendChild($generateChessBoard);
+            $generateChessBoard.addEventListener('click', this.generateChessBoard);
+          },
+
+          generateChessBoard(event) {
+            event.preventDefault();
+            const width = +document.getElementById('inputForWidth').value;
+            const height = +document.getElementById('inputForHeight').value;
+            if (width < 1 || width > 12 || height < 1 || height > 12) {
+              alert('Width and height must be between 1 and 12');
+            } else {
+              chessBoard.width = width;
+              chessBoard.height = height;
+              chessBoard.drawChessBoard();
+            }
+          }
+        };
+
+        chessBoard.drawChessBoard();
+        chessBoard.drawChessBoardControls();
       }
 
       window.onload = wrapperFunc;
     </script>
   </head>
   <body>
-    <h1>Exercise 1</h1>
-    <div id='chessBoard'></div>
-    <div id='chessBoardControls'></div>
-    <h1>Exercise 2</h1>
+    <h1>Exercises 1 & 2</h1>
     <div id='basket'></div>
     <div id='basketControls'></div>
     <h1>Exercise 01</h1>
     <div id='dungeonCrawler'></div>
     <div id='dungeonCrawlerControls'></div>
+    <h1>Exercise 02</h1>
+    <div id='chessBoard'></div>
+    <div id='chessBoardControls'></div>
   </body>
 </html>
