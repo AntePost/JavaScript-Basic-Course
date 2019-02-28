@@ -179,85 +179,85 @@
 
           // Сделал шахматную доску с динамически задаваемым размером
           drawChessBoard() {
-            // Создаем родительский элемент и массивы со значениями букв
-            const chessBoard = document.getElementById('chessBoard');
-            chessBoard.style.width = `${this.width + 2}02px`;
+            // Создаем родительский элемент и задаем ему динамическую ширину
+            const $chessBoard = document.getElementById('chessBoard');
+            $chessBoard.style.width = `${this.width + 2}02px`;
 
             // Пробегаемся по строками
             for (var i = 0; i < (this.height + 2); i++) {
               // Пробегаемся по столбцам
               for (var j = 0; j < (this.width + 2); j++) {
                 // Создаем дочерний элемент и присваиваем ему класс
-                const chessBoardCell = document.createElement('div');
-                chessBoardCell.classList.add('chessBoardCell');
+                const $chessBoardCell = document.createElement('div');
+                $chessBoardCell.classList.add('chessBoardCell');
                 // Если первая или последняя строка, то присваиваем ячейкам буквы (но не в первом или последнем столбце)
                 if (i === 0 || i === (this.height + 1)) {
                   if (!(j === 0) && !(j === (this.width + 1))) {
-                    chessBoardCell.innerHTML = this.letterArr[j - 1];
+                    $chessBoardCell.innerHTML = this.letterArr[j - 1];
                   }
                   // Если первая строка, то поворачиваем буквы
                   if (i === 0) {
-                    chessBoardCell.classList.add('rotate');
+                    $chessBoardCell.classList.add('rotate');
                   }
                 // Если четная строка
                 } else if (i % 2 === 0) {
                   // Если первый и последний столбец, то присваиваем ячейкам цифры (но не в первой или последней строке)
                   if (j === 0 || j === (this.width + 1)) {
                     if (!(i === 0) && !(i === (this.height + 1))) {
-                      chessBoardCell.innerHTML = this.height + 1 - i;
+                      $chessBoardCell.innerHTML = this.height + 1 - i;
                     }
                     // Если последний столбец, то поворачиваем цифры
                     if (j === (this.width + 1)) {
-                      chessBoardCell.classList.add('rotate');
+                      $chessBoardCell.classList.add('rotate');
                     }
                   // Если строка нечетная, то присваиваем один цвет, если четная - другой
                   } else if (!(j % 2 === 0)) {
-                    chessBoardCell.classList.add('black');
+                    $chessBoardCell.classList.add('black');
                   } else if (j % 2 === 0) {
-                    chessBoardCell.classList.add('beige');
+                    $chessBoardCell.classList.add('beige');
                   }
                 // Если нечетная строка (здесь тоже самое, только присвоение цвета в обратном порядке)
                 } else if (!(i % 2 === 0)) {
                   if (j === 0 || j === (this.width + 1)) {
                     if (!(i === 0) && !(i === (this.height + 1))) {
-                      chessBoardCell.innerHTML = this.height + 1 - i;
+                      $chessBoardCell.innerHTML = this.height + 1 - i;
                     }
                     if (j === (this.width + 1)) {
-                      chessBoardCell.classList.add('rotate');
+                      $chessBoardCell.classList.add('rotate');
                     }
                   } else if (!(j % 2 === 0)) {
-                    chessBoardCell.classList.add('beige');
+                    $chessBoardCell.classList.add('beige');
                   } else if (j % 2 === 0) {
-                    chessBoardCell.classList.add('black');
+                    $chessBoardCell.classList.add('black');
                   }
                 }
-                chessBoard.appendChild(chessBoardCell);
+                $chessBoard.appendChild($chessBoardCell);
               }
             }
           },
 
           drawChessBoardControls() {
-            const chessBoardControls = document.getElementById('chessBoardControls')
+            const $chessBoardControls = document.getElementById('chessBoardControls')
 
-            const chessBoardControlsForm = document.createElement('form');
-            chessBoardControls.appendChild(chessBoardControlsForm);
+            const $chessBoardControlsForm = document.createElement('form');
+            $chessBoardControls.appendChild($chessBoardControlsForm);
 
-            const labelForHeight = document.createElement('label');
-            labelForHeight.innerHTML = 'Set height';
-            chessBoardControlsForm.appendChild(labelForHeight);
-            const inputForHeight = document.createElement('input');
-            labelForHeight.appendChild(inputForHeight);
+            const $labelForHeight = document.createElement('label');
+            $labelForHeight.innerHTML = 'Set height';
+            $chessBoardControlsForm.appendChild($labelForHeight);
+            const $inputForHeight = document.createElement('input');
+            $labelForHeight.appendChild($inputForHeight);
 
-            const labelForWidth = document.createElement('label');
-            labelForWidth.innerHTML = 'Set width';
-            chessBoardControlsForm.appendChild(labelForWidth);
-            const inputForWidth = document.createElement('input');
-            labelForWidth.appendChild(inputForWidth);
+            const $labelForWidth = document.createElement('label');
+            $labelForWidth.innerHTML = 'Set width';
+            $chessBoardControlsForm.appendChild($labelForWidth);
+            const $inputForWidth = document.createElement('input');
+            $labelForWidth.appendChild($inputForWidth);
 
-            const generateChessBoard = document.createElement('button');
-            generateChessBoard.innerHTML = 'Generate Chessboard';
-            generateChessBoard.setAttribute('id', 'generateChessBoard');
-            chessBoardControlsForm.appendChild(generateChessBoard);
+            const $generateChessBoard = document.createElement('button');
+            $generateChessBoard.innerHTML = 'Generate Chessboard';
+            $generateChessBoard.setAttribute('id', 'generateChessBoard');
+            $chessBoardControlsForm.appendChild($generateChessBoard);
           },
         };
 
@@ -375,28 +375,28 @@
           },
 
           displayItems() {
-            const basket = document.getElementById('basket');
+            const $basket = document.getElementById('basket');
             const totalItems = this.constBasketItems();
 
             if (totalItems === 0) {
               const totalText = 'The basket is empty';
-              const totalElem = document.createElement('p');
+              const $totalElem = document.createElement('p');
               totalElem.innerHTML = totalText;
-              basket.appendChild(totalElem);
+              $basket.appendChild($totalElem);
             } else {
               const totalText = `There ${totalItems === 1 ? 'is' : 'are'} ${totalItems} ${totalItems === 1 ? 'item' : 'items'} in the basket with total price of ${this.countBasketPrice()} ${this.currency.toUpperCase()}`;
-              const totalElem = document.createElement('p');
-              totalElem.innerHTML = totalText;
+              const $totalElem = document.createElement('p');
+              $totalElem.innerHTML = totalText;
 
-              basket.appendChild(totalElem);
+              $basket.appendChild($totalElem);
 
-              const itemList = document.createElement('ol');
-              basket.appendChild(itemList);
+              const $itemList = document.createElement('ol');
+              $basket.appendChild($itemList);
               for (var i = 0; i < this.items.length; i++) {
                 const liText = `There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of '${this.items[i].name}' (price: ${this.items[i].price})`;
-                const liItem = document.createElement('li');
-                liItem.innerHTML = liText;
-                itemList.appendChild(liItem);
+                const $liItem = document.createElement('li');
+                $liItem.innerHTML = liText;
+                $itemList.appendChild($liItem);
               }
             }
           },
@@ -414,91 +414,91 @@
           },
 
           displayControls() {
-            const basketControls = document.getElementById('basketControls');
+            const $basketControls = document.getElementById('basketControls');
 
             // Добавляем кнопку "очистить корзину"
-            const clearBasketButton = document.createElement('button');
-            clearBasketButton.innerHTML = 'Clear Basket';
-            clearBasketButton.setAttribute('id', 'clearBasket');
-            basketControls.appendChild(clearBasketButton);
+            const $clearBasketButton = document.createElement('button');
+            $clearBasketButton.innerHTML = 'Clear Basket';
+            $clearBasketButton.setAttribute('id', 'clearBasket');
+            $basketControls.appendChild($clearBasketButton);
 
             // Добавляем форму для добавления товара в корзину
-            const addItemForm = document.createElement('form');
-            basketControls.appendChild(addItemForm);
+            const $addItemForm = document.createElement('form');
+            $basketControls.appendChild($addItemForm);
 
-            const addItemNameLabel = document.createElement('label');
-            addItemNameLabel.innerHTML = 'Name';
-            addItemForm.appendChild(addItemNameLabel);
-            const addItemNameInput = document.createElement('input');
-            addItemNameLabel.appendChild(addItemNameInput);
+            const $addItemNameLabel = document.createElement('label');
+            $addItemNameLabel.innerHTML = 'Name';
+            $addItemForm.appendChild($addItemNameLabel);
+            const $addItemNameInput = document.createElement('input');
+            $addItemNameLabel.appendChild($addItemNameInput);
 
-            const addItemPriceLabel = document.createElement('label');
-            addItemPriceLabel.innerHTML = 'Price';
-            addItemForm.appendChild(addItemPriceLabel);
-            const addItemPriceInput = document.createElement('input');
-            addItemPriceLabel.appendChild(addItemPriceInput);
+            const $addItemPriceLabel = document.createElement('label');
+            $addItemPriceLabel.innerHTML = 'Price';
+            $addItemForm.appendChild($addItemPriceLabel);
+            const $addItemPriceInput = document.createElement('input');
+            $addItemPriceLabel.appendChild($addItemPriceInput);
 
-            const addItemQuantityLabel = document.createElement('label');
-            addItemQuantityLabel.innerHTML = 'Quantity';
-            addItemForm.appendChild(addItemQuantityLabel);
-            const addItemQuantityInput = document.createElement('input');
-            addItemQuantityInput.setAttribute('type', 'number');
-            addItemQuantityLabel.appendChild(addItemQuantityInput);
+            const $addItemQuantityLabel = document.createElement('label');
+            $addItemQuantityLabel.innerHTML = 'Quantity';
+            $addItemForm.appendChild($addItemQuantityLabel);
+            const $addItemQuantityInput = document.createElement('input');
+            $addItemQuantityInput.setAttribute('type', 'number');
+            $addItemQuantityLabel.appendChild($addItemQuantityInput);
 
-            const addItemButton = document.createElement('button');
-            addItemButton.innerHTML = 'Add item';
-            addItemButton.setAttribute('id', 'addItem');
-            addItemForm.appendChild(addItemButton);
+            const $addItemButton = document.createElement('button');
+            $addItemButton.innerHTML = 'Add item';
+            $addItemButton.setAttribute('id', 'addItem');
+            $addItemForm.appendChild($addItemButton);
 
             // Добавляем форму для изменения количества товара
-            const changeQuantityForm = document.createElement('form');
-            basketControls.appendChild(changeQuantityForm);
+            const $changeQuantityForm = document.createElement('form');
+            $basketControls.appendChild($changeQuantityForm);
 
-            const changeQuantitySelect = document.createElement('select');
-            changeQuantityForm.appendChild(changeQuantitySelect);
+            const $changeQuantitySelect = document.createElement('select');
+            $changeQuantityForm.appendChild($changeQuantitySelect);
             for (var i = 0; i < this.items.length; i++) {
-              const changeQuantityOption = document.createElement('option');
-              changeQuantityOption.innerHTML = this.items[i].name;
-              changeQuantitySelect.appendChild(changeQuantityOption);
+              const $changeQuantityOption = document.createElement('option');
+              $changeQuantityOption.innerHTML = this.items[i].name;
+              $changeQuantitySelect.appendChild($changeQuantityOption);
             }
 
-            const changeQuantitySpan = document.createElement('span');
-            const curSelectText = changeQuantitySelect.options[changeQuantitySelect.selectedIndex].text;
+            const $changeQuantitySpan = document.createElement('span');
+            const curSelectText = $changeQuantitySelect.options[$changeQuantitySelect.selectedIndex].text;
             for (var i = 0; i < this.items.length; i++) {
               if (this.items[i].name == curSelectText) {
-                changeQuantitySpan.innerHTML = `Quantity: ${this.items[i].quantity}`;
+                $changeQuantitySpan.innerHTML = `Quantity: ${this.items[i].quantity}`;
               }
             }
-            changeQuantityForm.appendChild(changeQuantitySpan);
+            $changeQuantityForm.appendChild($changeQuantitySpan);
 
-            const changeQuantityLabel = document.createElement('label');
-            changeQuantityLabel.innerHTML = 'New Quantity';
-            changeQuantityForm.appendChild(changeQuantityLabel);
-            const changeQuantityInput = document.createElement('input');
-            changeQuantityInput.setAttribute('type', 'number');
-            changeQuantityLabel.appendChild(changeQuantityInput);
+            const $changeQuantityLabel = document.createElement('label');
+            $changeQuantityLabel.innerHTML = 'New Quantity';
+            $changeQuantityForm.appendChild($changeQuantityLabel);
+            const $changeQuantityInput = document.createElement('input');
+            $changeQuantityInput.setAttribute('type', 'number');
+            $changeQuantityLabel.appendChild($changeQuantityInput);
 
-            const changeQuantityButton = document.createElement('button');
-            changeQuantityButton.innerHTML = 'Change Quantity';
-            changeQuantityButton.setAttribute('id', 'changeQuantity');
-            changeQuantityForm.appendChild(changeQuantityButton);
+            const $changeQuantityButton = document.createElement('button');
+            $changeQuantityButton.innerHTML = 'Change Quantity';
+            $changeQuantityButton.setAttribute('id', 'changeQuantity');
+            $changeQuantityForm.appendChild($changeQuantityButton);
 
             // Добавляем форму для удаления товара
-            const removeItemForm = document.createElement('form');
-            basketControls.appendChild(removeItemForm);
+            const $removeItemForm = document.createElement('form');
+            $basketControls.appendChild($removeItemForm);
 
-            const removeItemSelect = document.createElement('select');
-            removeItemForm.appendChild(removeItemSelect);
+            const $removeItemSelect = document.createElement('select');
+            $removeItemForm.appendChild($removeItemSelect);
             for (var i = 0; i < this.items.length; i++) {
-              const removeItemOption = document.createElement('option');
-              removeItemOption.innerHTML = this.items[i].name;
-              removeItemSelect.appendChild(removeItemOption);
+              const $removeItemOption = document.createElement('option');
+              $removeItemOption.innerHTML = this.items[i].name;
+              $removeItemSelect.appendChild($removeItemOption);
             }
 
-            const removeItemButton = document.createElement('button');
-            removeItemButton.innerHTML = 'Remove Item';
-            removeItemButton.setAttribute('id', 'removeItem');
-            removeItemForm.appendChild(removeItemButton);
+            const $removeItemButton = document.createElement('button');
+            $removeItemButton.innerHTML = 'Remove Item';
+            $removeItemButton.setAttribute('id', 'removeItem');
+            $removeItemForm.appendChild($removeItemButton);
           }
         }
 
@@ -507,8 +507,9 @@
 
         // Exercise 3
         /*
-        Не понимаю, что здесь надо сделать, задание невнятно сформулировано.
-        Вроде нечто похожее я уже сделал во втором задании.
+        Весь каталог делать через команды JS - это слишком много бессмысленной работы.
+        Поэтому это задание я пропустил.
+        Думаю, что остальные задания дали достаточно практики в этом аспекте языка.
         */
 
         // Exercise 01
@@ -545,48 +546,48 @@
           },
 
           drawMap() {
-            const dungeonCrawler = document.getElementById('dungeonCrawler');
+            const $dungeonCrawler = document.getElementById('dungeonCrawler');
 
-            const mapText = document.createElement('p');
-            mapText.innerHTML = 'Map of the area';
-            dungeonCrawler.appendChild(mapText);
+            const $mapText = document.createElement('p');
+            $mapText.innerHTML = 'Map of the area';
+            $dungeonCrawler.appendChild($mapText);
 
-            const mapContainer = document.createElement('div');
-            mapContainer.setAttribute('id', 'mapContainer');
-            dungeonCrawler.appendChild(mapContainer);
+            const $mapContainer = document.createElement('div');
+            $mapContainer.setAttribute('id', 'mapContainer');
+            $dungeonCrawler.appendChild($mapContainer);
 
             for (var i = 0; i < this.map.length; i++) {
               for (var j = 0; j < this.map[i].length; j++) {
-                const mapCell = document.createElement('div');
-                mapCell.classList.add('mapCell');
+                const $mapCell = document.createElement('div');
+                $mapCell.classList.add('mapCell');
                 if (!this.map[i][j].explored) {
-                  mapCell.classList.add('unexplored');
+                  $mapCell.classList.add('unexplored');
                 } else {
                   switch (this.map[i][j].type) {
                     case 'room':
-                      mapCell.classList.add('room');
+                      $mapCell.classList.add('room');
                       break;
                     case 'wall':
-                      mapCell.classList.add('wall');
+                      $mapCell.classList.add('wall');
                       break;
                   }
                 }
-                mapContainer.appendChild(mapCell);
+                $mapContainer.appendChild($mapCell);
                 if (i === y && j === x) {
-                  const playerImg = document.createElement('img');
-                  playerImg.src = 'http://pixelartmaker.com/art/4fe55c1d90ee939.png';
-                  playerImg.classList.add('player');
-                  mapCell.appendChild(playerImg);
+                  const $playerImg = document.createElement('img');
+                  $playerImg.src = 'http://pixelartmaker.com/art/4fe55c1d90ee939.png';
+                  $playerImg.classList.add('player');
+                  $mapCell.appendChild($playerImg);
                 }
               }
             }
 
-            const playerStatsDiv = document.createElement('div');
-            playerStatsDiv.setAttribute('id', 'playerStatsDiv');
-            dungeonCrawler.appendChild(playerStatsDiv);
-            const hp = document.createElement('p');
-            hp.innerHTML = `Your HP: ${this.player.hp}/10`;
-            playerStatsDiv.appendChild(hp);
+            const $playerStatsDiv = document.createElement('div');
+            $playerStatsDiv.setAttribute('id', 'playerStatsDiv');
+            $dungeonCrawler.appendChild($playerStatsDiv);
+            const $hp = document.createElement('p');
+            $hp.innerHTML = `Your HP: ${this.player.hp}/10`;
+            $playerStatsDiv.appendChild($hp);
           },
 
           drawControls() {
@@ -597,20 +598,22 @@
               '<i class="fas fa-arrow-down"></i>',
             ];
 
-            const controlsDiv = document.createElement('div');
-            controlsDiv.setAttribute('id', 'controlsDiv');
-            dungeonCrawlerControls.appendChild(controlsDiv);
+            const $dungeonCrawlerControls = document.getElementById('dungeonCrawlerControls');
+
+            const $controlsDiv = document.createElement('div');
+            $controlsDiv.setAttribute('id', 'controlsDiv');
+            $dungeonCrawlerControls.appendChild($controlsDiv);
             for (var i = 0; i < ArrowArr.length; i++) {
-              const moveArrow = document.createElement('button');
-              moveArrow.classList.add('moveArrow');
-              moveArrow.innerHTML = ArrowArr[i];
-              controlsDiv.appendChild(moveArrow);
+              const $moveArrow = document.createElement('button');
+              $moveArrow.classList.add('moveArrow');
+              $moveArrow.innerHTML = ArrowArr[i];
+              $controlsDiv.appendChild($moveArrow);
             }
 
-            const messageDiv = document.createElement('div');
-            messageDiv.innerHTML = 'To win the game defeat the enemy';
-            messageDiv.setAttribute('id', 'messageDiv');
-            dungeonCrawlerControls.appendChild(messageDiv);
+            const $messageDiv = document.createElement('div');
+            $messageDiv.innerHTML = 'To win the game defeat the enemy';
+            $messageDiv.setAttribute('id', 'messageDiv');
+            $dungeonCrawlerControls.appendChild($messageDiv);
           },
 
           movePlayer() {
