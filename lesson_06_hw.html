@@ -225,6 +225,11 @@
         width: 500px;
         height: 90px;
       }
+      #playAgain {
+        height: 50px;
+        width: 200px;
+        font-size: inherit;
+      }
 
       #ticTacToe {
         width: 302px;
@@ -612,6 +617,7 @@
             hp: 10,
             attack: 2
           },
+          gameEnded: false,
 
           drawMap() {
             const $dungeonCrawler = document.getElementById('dungeonCrawler');
@@ -944,17 +950,34 @@
               this.skeleton.hp = 0;
               $hp.innerHTML = `Your HP: ${this.player.hp}/10`;
               $skeletonHP.innerHTML = `Skeleton's HP: ${dungeonCrawlerGame.skeleton.hp}/10`;
+              this.gameEnded = true;
             } else if (this.player.hp < 1) {
               $dungeonCrawlerControls.innerHTML = '';
               $dungeonCrawlerControls.innerHTML = 'Skeleton cuts off your head! You died and lost the game';
               this.player.hp = 0;
               $hp.innerHTML = `Your HP: ${this.player.hp}/10`;
+              this.gameEnded = true;
             } else if (this.skeleton.hp < 1) {
               $dungeonCrawlerControls.innerHTML = '';
               $dungeonCrawlerControls.innerHTML = 'You\'ve defeated the evil skeleton and won the game! Congratulations!';
               this.skeleton.hp = 0;
               $skeletonHP.innerHTML = `Skeleton's HP: ${dungeonCrawlerGame.skeleton.hp}/10`;
+              this.gameEnded = true;
             }
+
+            if (this.gameEnded) {
+              const $playAgain = document.createElement('button');
+              const $br = document.createElement('br');
+              $playAgain.innerHTML = 'Play again?';
+              $playAgain.setAttribute('id', 'playAgain');
+              $playAgain.addEventListener('click', this.resetGame);
+              $dungeonCrawlerControls.appendChild($br);
+              $dungeonCrawlerControls.appendChild($playAgain);
+            }
+          },
+
+          resetGame() {
+            alert('Work in progress');
           },
 
           isHit() {
