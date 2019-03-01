@@ -222,6 +222,22 @@
         width: 500px;
         height: 90px;
       }
+
+      #ticTacToe {
+        width: 302px;
+        margin: 10px auto 0;
+        display: flex;
+        flex-wrap: wrap;
+        border: none;
+      }
+      .gridCell {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 48px;
+      }
     </style>
     <script>
       function wrapperFunc() {
@@ -999,6 +1015,115 @@
 
         chessBoard.drawChessBoard();
         chessBoard.drawChessBoardControls();
+
+        // Exercise 03
+        const ticTacToe = {
+          grid: [
+            [
+              null, null, null
+            ],
+            [
+              null, null, null
+            ],
+            [
+              null, null, null
+            ],
+          ],
+          playerOneTurn: true,
+
+          drawGrid() {
+            const $ticTacToe = document.getElementById('ticTacToe');
+
+            for (var i = 0; i < this.grid.length; i++) {
+              for (var j = 0; j < this.grid[i].length; j++) {
+                const $gridCell = document.createElement('div');
+                $gridCell.classList.add('gridCell');
+                $gridCell.setAttribute('id', `gridCell_${i}${j}`);
+
+                if (i == 0) {
+                  $gridCell.style.borderTop = 'none';
+                } else if (i == 2) {
+                  $gridCell.style.borderBottom = 'none';
+                }
+
+                if (j == 0) {
+                  $gridCell.style.borderLeft = 'none';
+                } else if (j == 2) {
+                  $gridCell.style.borderRight = 'none';
+                }
+
+                $gridCell.addEventListener('click', this.checkOff);
+                $ticTacToe.appendChild($gridCell);
+              }
+            }
+          },
+
+          checkOff(event) {
+            const idNumbers = event.target.id.split('_')[1].split('');
+
+            if (!ticTacToe.grid[idNumbers[0]][idNumbers[1]]) {
+              if (ticTacToe.playerOneTurn) {
+                ticTacToe.grid[idNumbers[0]][idNumbers[1]] = 'X';
+                event.target.innerHTML = 'X';
+                ticTacToe.playerOneTurn = false;
+              } else {
+                ticTacToe.grid[idNumbers[0]][idNumbers[1]] = 'O';
+                event.target.innerHTML = 'O';
+                ticTacToe.playerOneTurn = true;
+              }
+
+              ticTacToe.checkForWin();
+            }
+          },
+
+          checkForWin() {
+            const verticalRows = this.transposeArray(this.grid);
+            const diagonalRows = [[], [],];
+            diagonalRows[0] = [this.grid[0][0], this.grid[1][1], this.grid[2][2]];
+            diagonalRows[1] = [this.grid[0][2], this.grid[1][1], this.grid[2][0]];
+
+            if (this.grid[0].every(this.isCrosses) || this.grid[1].every(this.isCrosses) || this.grid[2].every(this.isCrosses)) {
+              alert('Player 1 has Won');
+            } else if (this.grid[0].every(this.isOughts) || this.grid[1].every(this.isOughts) || this.grid[2].every(this.isOughts)) {
+              alert('Player 2 has Won');
+            } else if (verticalRows[0].every(this.isCrosses) || verticalRows[1].every(this.isCrosses) || verticalRows[2].every(this.isCrosses)) {
+              alert('Player 1 has Won');
+            } else if (verticalRows[0].every(this.isOughts) || verticalRows[1].every(this.isOughts) || verticalRows[2].every(this.isOughts)) {
+              alert('Player 2 has Won');
+            } else if (diagonalRows[0].every(this.isCrosses) || diagonalRows[1].every(this.isCrosses)) {
+              alert('Player 1 has Won');
+            } else if (diagonalRows[0].every(this.isOughts) || diagonalRows[1].every(this.isOughts)) {
+              alert('Player 2 has Won');
+            } else if (!this.grid.flat().includes(null)) {
+              alert('The game is a draw');
+            }
+          },
+
+          isCrosses(cur) {
+            return cur == 'X';
+          },
+
+          isOughts(cur) {
+            return cur == 'O';
+          },
+
+          transposeArray(arr) {
+            const newArr = [];
+            for (var i = 0; i < arr.length; i++) {
+              newArr.push([]);
+            }
+
+            for (var i = 0; i < arr.length; i++) {
+              for (var j = 0; j < arr.length; j++) {
+                newArr[j].push(this.grid[i][j]);
+              }
+            }
+
+            return newArr;
+          },
+        };
+
+        ticTacToe.drawGrid();
       }
 
       window.onload = wrapperFunc;
@@ -1021,5 +1146,7 @@
     <h1>Exercise 02</h1>
     <div id='chessBoard'></div>
     <div id='chessBoardControls'></div>
+    <h1>Exercise 03</h1>
+    <div id='ticTacToe'></div>
   </body>
 </html>
