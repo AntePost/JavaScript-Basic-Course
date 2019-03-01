@@ -28,7 +28,7 @@
         transform: rotate(180deg);
       }
       .black {
-        background-color: black;
+        background-color: saddleBrown ;
       }
       .beige {
         background-color: beige;
@@ -127,12 +127,6 @@
         height: 200px;
         border: none;
       }
-      .show {
-        display: block;
-      }
-      .hide {
-        display: none;
-      }
       .close {
         color: #000;
         float: right;
@@ -186,7 +180,11 @@
         left: 0;
         margin: 10% 0 0 5%;
         width: 250px;
-        height: 200px;
+        height: 304px;
+      }
+      .potion {
+        height: 100px;
+        display: none;
       }
       #skeletonStatsDiv {
         position: absolute;
@@ -237,6 +235,13 @@
         justify-content: center;
         align-items: center;
         font-size: 48px;
+      }
+
+      .show {
+        display: block;
+      }
+      .hide {
+        display: none;
       }
     </style>
     <script>
@@ -633,6 +638,13 @@
             const $attack = document.createElement('p');
             $attack.innerHTML = `Your attack: ${this.player.attack}`;
             $playerStatsDiv.appendChild($attack);
+            const $potion = document.createElement('img');
+            $potion.classList.add('potion');
+            if (this.player.hasPotion) {
+              $potion.classList.add('show');
+            }
+            $potion.src = 'https://www.freeiconspng.com/uploads/potion-icon-png-14.png';
+            $playerStatsDiv.appendChild($potion);
 
             const $skeletonStatsDiv = document.createElement('div');
             $skeletonStatsDiv.setAttribute('id', 'skeletonStatsDiv');
@@ -789,6 +801,7 @@
               this.player.attack += 2;
               $messageDiv.innerHTML += '<br>' + 'You\'ve found a good sword.' + '<br>' + 'You\'ve gained 2 attack';
             }
+            this.drawMap();
           },
 
           determineChestContent() {
@@ -966,7 +979,71 @@
                   }
                 }
                 $chessBoard.appendChild($chessBoardCell);
+                // Проверяем, подходящая ли ячейка для фигуры
+                if (this.isPlaceForPiece(i, j)) {
+                  const $chessPiece = document.createElement('img');
+                  // Если первая или последняя строка доски
+                  if (i == 1 || i == this.height) {
+                    // Размещаем фигуры в зависимости от столбца
+                    switch (j) {
+                      case 1:
+                      case 8:
+                        if (i == 1) {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png';
+                        } else {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png';
+                        }
+                        break;
+                      case 2:
+                      case 7:
+                        if (i == 1) {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Chess_ndt60.png';
+                        } else {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png';
+                        }
+                        break;
+                      case 3:
+                      case 6:
+                        if (i == 1) {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png';
+                        } else {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_blt60.png';
+                        }
+                        break;
+                      case 4:
+                        if (i == 1) {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/a/af/Chess_qdt60.png';
+                        } else {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/4/49/Chess_qlt60.png';
+                        }
+                        break;
+                      case 5:
+                        if (i == 1) {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Chess_kdt60.png';
+                        } else {
+                          $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Chess_klt60.png';
+                        }
+                        break;
+                    }
+                  } else {
+                    if (i == 2) {
+                      $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/c/cd/Chess_pdt60.png';
+                    } else {
+                      $chessPiece.src = 'https://upload.wikimedia.org/wikipedia/commons/0/04/Chess_plt60.png';
+                    }
+                  }
+                  $chessBoardCell.appendChild($chessPiece);
+                }
               }
+            }
+          },
+
+          // Функция проверяет, находится ли ячейка в первых двух или последних двух строках самой доски (не включая поля)
+          isPlaceForPiece(i, j) {
+            if ((this.width == 8 && this.height > 3) && (i == 1 || i == 2 || i == this.height || i == this.height - 1) && (j != 0 && j != this.width + 1)) {
+              return true;
+            } else {
+              return false;
             }
           },
 
