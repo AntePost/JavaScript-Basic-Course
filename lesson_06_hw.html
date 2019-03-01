@@ -1125,6 +1125,7 @@
             ],
           ],
           playerOneTurn: true,
+          gameEnded: false,
 
           drawGrid() {
             const $ticTacToe = document.getElementById('ticTacToe');
@@ -1174,6 +1175,7 @@
               }
             }
             ticTacToe.playerOneTurn = true;
+            ticTacToe.gameEnded = false;
             const $playerTurnDiv = document.getElementById('playerTurnDiv');
             $playerTurnDiv.innerHTML = `Player ${ticTacToe.playerOneTurn ? '1' : '2'} turn (${ticTacToe.playerOneTurn ? 'X' : 'O'}s)`;
           },
@@ -1215,18 +1217,32 @@
 
             if (this.grid[0].every(this.isCrosses) || this.grid[1].every(this.isCrosses) || this.grid[2].every(this.isCrosses)) {
               $playerTurnDiv.innerHTML = 'Player 1 has Won';
+              this.gameEnded = true;
             } else if (this.grid[0].every(this.isOughts) || this.grid[1].every(this.isOughts) || this.grid[2].every(this.isOughts)) {
               $playerTurnDiv.innerHTML = 'Player 2 has Won';
+              this.gameEnded = true;
             } else if (verticalRows[0].every(this.isCrosses) || verticalRows[1].every(this.isCrosses) || verticalRows[2].every(this.isCrosses)) {
               $playerTurnDiv.innerHTML = 'Player 1 has Won';
+              this.gameEnded = true;
             } else if (verticalRows[0].every(this.isOughts) || verticalRows[1].every(this.isOughts) || verticalRows[2].every(this.isOughts)) {
               $playerTurnDiv.innerHTML = 'Player 2 has Won';
+              this.gameEnded = true;
             } else if (diagonalRows[0].every(this.isCrosses) || diagonalRows[1].every(this.isCrosses)) {
               $playerTurnDiv.innerHTML = 'Player 1 has Won';
+              this.gameEnded = true;
             } else if (diagonalRows[0].every(this.isOughts) || diagonalRows[1].every(this.isOughts)) {
               $playerTurnDiv.innerHTML = 'Player 2 has Won';
+              this.gameEnded = true;
             } else if (!this.grid.flat().includes(null)) {
               $playerTurnDiv.innerHTML = 'The game is a draw';
+              this.gameEnded = true;
+            }
+
+            if (this.gameEnded) {
+              const $gridCells = document.getElementsByClassName('gridCell');
+              for (var i = 0; i < $gridCells.length; i++) {
+                $gridCells[i].removeEventListener('click', this.checkOff);
+              }
             }
           },
 
