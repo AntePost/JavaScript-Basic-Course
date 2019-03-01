@@ -227,6 +227,7 @@
         display: flex;
         flex-wrap: wrap;
         border: none;
+        position: relative;
       }
       .gridCell {
         width: 100px;
@@ -235,6 +236,23 @@
         justify-content: center;
         align-items: center;
         font-size: 48px;
+      }
+      #clearButton {
+        position: absolute;
+        top: 37%;
+        left: -80%;
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+      }
+      #playerTurnDiv {
+        position: absolute;
+        top: 37%;
+        right: -110%;
+        height: 80px;
+        width: 300px;
+        font-size: inherit;
+        line-height: 80px;
       }
 
       .show {
@@ -1110,6 +1128,7 @@
 
           drawGrid() {
             const $ticTacToe = document.getElementById('ticTacToe');
+            $ticTacToe.innerHTML = '';
 
             for (var i = 0; i < this.grid.length; i++) {
               for (var j = 0; j < this.grid[i].length; j++) {
@@ -1133,6 +1152,38 @@
                 $ticTacToe.appendChild($gridCell);
               }
             }
+
+            this.drawTicTacToeButton();
+            this.drawPlayerTurnDiv();
+          },
+
+          drawTicTacToeButton() {
+            const $ticTacToe = document.getElementById('ticTacToe');
+            const $clearButton = document.createElement('button');
+            $clearButton.innerHTML = 'Clear';
+            $clearButton.setAttribute('id', 'clearButton');
+            $clearButton.addEventListener('click', this.clearTicTacToe);
+            $ticTacToe.appendChild($clearButton);
+          },
+
+          clearTicTacToe(event) {
+            ticTacToe.drawGrid();
+            for (var i = 0; i < ticTacToe.grid.length; i++) {
+              for (var j = 0; j < ticTacToe.grid[i].length; j++) {
+                ticTacToe.grid[i][j] = null;
+              }
+            }
+            ticTacToe.playerOneTurn = true;
+            const $playerTurnDiv = document.getElementById('playerTurnDiv');
+            $playerTurnDiv.innerHTML = `Player ${ticTacToe.playerOneTurn ? '1' : '2'} turn (${ticTacToe.playerOneTurn ? 'X' : 'O'}s)`;
+          },
+
+          drawPlayerTurnDiv() {
+            const $ticTacToe = document.getElementById('ticTacToe');
+            const $playerTurnDiv = document.createElement('div');
+            $playerTurnDiv.innerHTML = `Player ${this.playerOneTurn ? '1' : '2'} turn (${this.playerOneTurn ? 'X' : 'O'}s)`;
+            $playerTurnDiv.setAttribute('id', 'playerTurnDiv');
+            $ticTacToe.appendChild($playerTurnDiv);
           },
 
           checkOff(event) {
@@ -1149,30 +1200,33 @@
                 ticTacToe.playerOneTurn = true;
               }
 
+              const $playerTurnDiv = document.getElementById('playerTurnDiv');
+              $playerTurnDiv.innerHTML = `Player ${ticTacToe.playerOneTurn ? '1' : '2'} turn (${ticTacToe.playerOneTurn ? 'X' : 'O'}s)`;
               ticTacToe.checkForWin();
             }
           },
 
           checkForWin() {
+            const $playerTurnDiv = document.getElementById('playerTurnDiv');
             const verticalRows = this.transposeArray(this.grid);
             const diagonalRows = [[], [],];
             diagonalRows[0] = [this.grid[0][0], this.grid[1][1], this.grid[2][2]];
             diagonalRows[1] = [this.grid[0][2], this.grid[1][1], this.grid[2][0]];
 
             if (this.grid[0].every(this.isCrosses) || this.grid[1].every(this.isCrosses) || this.grid[2].every(this.isCrosses)) {
-              alert('Player 1 has Won');
+              $playerTurnDiv.innerHTML = 'Player 1 has Won';
             } else if (this.grid[0].every(this.isOughts) || this.grid[1].every(this.isOughts) || this.grid[2].every(this.isOughts)) {
-              alert('Player 2 has Won');
+              $playerTurnDiv.innerHTML = 'Player 2 has Won';
             } else if (verticalRows[0].every(this.isCrosses) || verticalRows[1].every(this.isCrosses) || verticalRows[2].every(this.isCrosses)) {
-              alert('Player 1 has Won');
+              $playerTurnDiv.innerHTML = 'Player 1 has Won';
             } else if (verticalRows[0].every(this.isOughts) || verticalRows[1].every(this.isOughts) || verticalRows[2].every(this.isOughts)) {
-              alert('Player 2 has Won');
+              $playerTurnDiv.innerHTML = 'Player 2 has Won';
             } else if (diagonalRows[0].every(this.isCrosses) || diagonalRows[1].every(this.isCrosses)) {
-              alert('Player 1 has Won');
+              $playerTurnDiv.innerHTML = 'Player 1 has Won';
             } else if (diagonalRows[0].every(this.isOughts) || diagonalRows[1].every(this.isOughts)) {
-              alert('Player 2 has Won');
+              $playerTurnDiv.innerHTML = 'Player 2 has Won';
             } else if (!this.grid.flat().includes(null)) {
-              alert('The game is a draw');
+              $playerTurnDiv.innerHTML = 'The game is a draw';
             }
           },
 
