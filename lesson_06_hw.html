@@ -104,6 +104,52 @@
         font-size: inherit;
         margin-left: 50px;
       }
+      .modalWrapper {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+        border: none;
+      }
+      .modalWindow {
+        position: absolute;
+        top: 20%;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        width: 250px;
+        height: 200px;
+        border: none;
+      }
+      .show {
+        display: block;
+      }
+      .hide {
+        display: none;
+      }
+      .close {
+        color: #000;
+        float: right;
+        margin: 0;
+        cursor: pointer;
+        line-height: 15px;
+      }
+      #modalArrowLeft {
+        position: absolute;
+        top: 45%;
+        left: 0;
+      }
+      #modalArrowRight {
+        position: absolute;
+        top: 45%;
+        right: 0;
+      }
 
       #dungeonCrawler {
         width: 1002px;
@@ -183,9 +229,21 @@
         const basket = {
           currency: 'usd',
           items: [
-            {name: 'Product 1', price: 500, quantity: 1},
-            {name: 'Product 2', price: 200, quantity: 2},
-            {name: 'Product 3', price: 100, quantity: 3},
+            {name: 'Product 1', price: 500, quantity: 1, curSelectPicture: 0, pictures: [
+              'https://upload.wikimedia.org/wikipedia/commons/d/d5/1-PA250210%2C_The_old_temple_has_taken_over_by_the_new_one.JPG',
+              'https://upload.wikimedia.org/wikipedia/commons/4/4f/1-PA250215%2C_The_new_temple.JPG',
+              'https://upload.wikimedia.org/wikipedia/commons/0/05/1-PA250222_At_Sarakki%2C.JPG',
+            ]},
+            {name: 'Product 2', price: 200, quantity: 2, curSelectPicture: 0, pictures: [
+              'https://upload.wikimedia.org/wikipedia/commons/7/72/1000BlueBull.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/6/62/102Cervus.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/f/f0/10BlackBuck.jpg',
+            ]},
+            {name: 'Product 3', price: 100, quantity: 3, curSelectPicture: 0, pictures: [
+              'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/4/43/48974389.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/d/d9/49016356.jpg',
+            ]},
           ],
 
           countBasketPrice() {
@@ -251,10 +309,16 @@
               const $itemList = document.createElement('ol');
               $basket.appendChild($itemList);
               for (var i = 0; i < this.items.length; i++) {
-                const liText = `There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of '${this.items[i].name}' (price: ${this.items[i].price})`;
+                const liText = `There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of '${this.items[i].name}' (price: ${this.items[i].price}) (<a href='#'>pictures</a>)`;
                 const $liItem = document.createElement('li');
                 $liItem.innerHTML = liText;
                 $itemList.appendChild($liItem);
+              }
+
+              const $linksArr = $itemList.getElementsByTagName('a');
+              for (var i = 0; i < $linksArr.length; i++) {
+                $linksArr[i].setAttribute('id', 'pictureAnchor_' + [i]);
+                $linksArr[i].addEventListener('click', this.openModalWindow);
               }
             }
           },
@@ -406,11 +470,64 @@
             $removeItemButton.setAttribute('id', 'removeItem');
             $removeItemButton.addEventListener('click', this.removeItemFromBasket);
             $removeItemForm.appendChild($removeItemButton);
-          }
+          },
+
+          prepareModal() {
+            const $closeSpan = document.getElementsByClassName('close')[0];
+            const $leftArrow = document.getElementById('modalArrowLeft');
+            const $rigthArrow = document.getElementById('modalArrowRight');
+            $closeSpan.addEventListener('click', this.closeModal);
+            window.addEventListener('click', this.closeModalAnywhere);
+            $leftArrow.addEventListener('click', this.switchPictures);
+            $rigthArrow.addEventListener('click', this.switchPictures);
+          },
+
+          openModalWindow(event) {
+            event.preventDefault();
+            const $modalWrapper = document.getElementsByClassName('modalWrapper')[0];
+            const $modalWindow = document.getElementsByClassName('modalWindow')[0];
+            $modalWrapper.classList.remove('hide');
+            $modalWrapper.classList.add('show');
+
+            const idParts = event.target.id.split('_');
+            $modalWindow.style.backgroundImage = `url(${basket.items[idParts[1]].pictures[0]})`;
+            $modalWindow.setAttribute('id', `pictureOfProduct_${idParts[1]}`);
+          },
+
+          closeModal(event) {
+            const $modalWrapper = document.getElementsByClassName('modalWrapper')[0];
+            $modalWrapper.classList.remove('show');
+            $modalWrapper.classList.add('hide');
+          },
+
+          closeModalAnywhere(event) {
+            const $modalWrapper = document.getElementsByClassName('modalWrapper')[0];
+            const $modalWindow = document.getElementsByClassName('modalWindow')[0];
+            if ((event.target.tagName != 'A') && (event.target.tagName != 'I') && (event.target != $modalWindow)) {
+              $modalWrapper.classList.remove('show');
+              $modalWrapper.classList.add('hide');
+            }
+          },
+
+          switchPictures(event) {
+            const $modalWindow = event.target.parentElement;
+            const idParts = $modalWindow.id.split('_');
+
+            if (basket.items[idParts[1]].curSelectPicture < 2) {
+              basket.items[idParts[1]].curSelectPicture++;
+
+            } else {
+              basket.items[idParts[1]].curSelectPicture = 0;
+            }
+
+            const curSelectPicture = basket.items[idParts[1]].curSelectPicture;
+            $modalWindow.style.backgroundImage = `url(${basket.items[idParts[1]].pictures[curSelectPicture]})`;
+          },
         }
 
         basket.displayItems();
         basket.displayControls();
+        basket.prepareModal();
 
         // Exercise 01
         const dungeonCrawlerGame = {
@@ -825,6 +942,13 @@
   <body>
     <h1>Exercises 1 & 2</h1>
     <div id='basket'></div>
+    <div class="modalWrapper">
+      <div class='modalWindow'>
+        <span class="close">&times;</span>
+        <i class="fas fa-arrow-left" id='modalArrowLeft'></i>
+        <i class="fas fa-arrow-right" id='modalArrowRight'></i>
+      </div>
+    </div>
     <div id='basketControls'></div>
     <h1>Exercise 01</h1>
     <div id='dungeonCrawler'></div>
