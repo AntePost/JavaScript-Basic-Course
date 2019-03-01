@@ -188,6 +188,14 @@
         width: 250px;
         height: 200px;
       }
+      #skeletonStatsDiv {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 10% 5% 0 0;
+        width: 250px;
+        height: 200px;
+      }
 
       #dungeonCrawlerControls {
         margin: 10px auto 0;
@@ -564,6 +572,7 @@
 
           drawMap() {
             const $dungeonCrawler = document.getElementById('dungeonCrawler');
+            $dungeonCrawler.innerHTML = '';
 
             const $mapText = document.createElement('p');
             $mapText.innerHTML = 'Map of the area';
@@ -605,6 +614,17 @@
             const $hp = document.createElement('p');
             $hp.innerHTML = `Your HP: ${this.player.hp}/10`;
             $playerStatsDiv.appendChild($hp);
+            const $attack = document.createElement('p');
+            $attack.innerHTML = `Your attack: ${this.player.attack}`;
+            $playerStatsDiv.appendChild($attack);
+
+            const $skeletonStatsDiv = document.createElement('div');
+            $skeletonStatsDiv.setAttribute('id', 'skeletonStatsDiv');
+            $skeletonStatsDiv.classList.add('hide');
+            $dungeonCrawler.appendChild($skeletonStatsDiv);
+            const $skeletonHP = document.createElement('p');
+            $skeletonHP.innerHTML = `Skeleton's HP: ${this.skeleton.hp}/10`;
+            $skeletonStatsDiv.appendChild($skeletonHP);
           },
 
           drawControls() {
@@ -620,11 +640,16 @@
             const $controlsDiv = document.createElement('div');
             $controlsDiv.setAttribute('id', 'controlsDiv');
             $dungeonCrawlerControls.appendChild($controlsDiv);
+
+            const directions = ['up', 'right', 'left', 'down',];
+
             for (var i = 0; i < ArrowArr.length; i++) {
               const $moveArrow = document.createElement('button');
               $moveArrow.classList.add('moveArrow');
+              $moveArrow.setAttribute('id', `move_${directions[i]}`);
               $moveArrow.innerHTML = ArrowArr[i];
               $controlsDiv.appendChild($moveArrow);
+              $moveArrow.addEventListener('click', this.movePlayer);
             }
 
             const $messageDiv = document.createElement('div');
@@ -633,62 +658,94 @@
             $dungeonCrawlerControls.appendChild($messageDiv);
           },
 
-          movePlayer() {
-            let direction = prompt('Where would you want to go? (up, down, left, right)');
-            while (direction != 'up' && direction != 'down' && direction != 'right' && direction != 'left') {
-              direction = prompt('Enter one of possible directions (up, down, left, right)');
+          movePlayer(event) {
+            if (event.target.tagName == 'I') {
+              var $moveArrow = event.target.parentElement;
+            } else {
+              var $moveArrow = event.target;
             }
+            const direction = $moveArrow.id.split('_')[1];
+            const $messageDiv = document.getElementById('messageDiv');
+
             switch (direction) {
               case 'up':
                 if (y - 1 < 0) {
-                  alert('You can\'t go there');
+                  $messageDiv.innerHTML = 'You can\'t go there';
                 } else {
                   y--;
-                  this.map[y][x].explored = true;
+                  dungeonCrawlerGame.map[y][x].explored = true;
+                  dungeonCrawlerGame.drawMap();
+                  if (!dungeonCrawlerGame.map[y][x].content) {
+                    $messageDiv.innerHTML = 'This room is empty';
+                  } else {
+                    dungeonCrawlerGame.interactWithContent();
+                  }
                 }
 
-                if (this.map[y][x].type == 'wall') {
-                  alert('You\'ve hit a wall');
+                if (dungeonCrawlerGame.map[y][x].type == 'wall') {
+                  $messageDiv.innerHTML = 'You\'ve hit a wall';
                   y++;
+                  dungeonCrawlerGame.drawMap();
                 }
                 break;
               case 'down':
                 if (y + 1 > 2) {
-                  alert('You can\'t go there');
+                  $messageDiv.innerHTML = 'You can\'t go there';
                 } else {
                   y++;
-                  this.map[y][x].explored = true;
+                  dungeonCrawlerGame.map[y][x].explored = true;
+                  dungeonCrawlerGame.drawMap();
+                  if (!dungeonCrawlerGame.map[y][x].content) {
+                    $messageDiv.innerHTML = 'This room is empty';
+                  } else {
+                    dungeonCrawlerGame.interactWithContent();
+                  }
                 }
 
-                if (this.map[y][x].type == 'wall') {
-                  alert('You\'ve hit a wall');
+                if (dungeonCrawlerGame.map[y][x].type == 'wall') {
+                  $messageDiv.innerHTML = 'You\'ve hit a wall';
                   y--;
+                  dungeonCrawlerGame.drawMap();
                 }
                 break;
               case 'left':
                 if (x - 1 < 0) {
-                  alert('You can\'t go there');
+                  $messageDiv.innerHTML = 'You can\'t go there';
                 } else {
                   x--;
-                  this.map[y][x].explored = true;
+                  dungeonCrawlerGame.map[y][x].explored = true;
+                  dungeonCrawlerGame.drawMap();
+                  if (!dungeonCrawlerGame.map[y][x].content) {
+                    $messageDiv.innerHTML = 'This room is empty';
+                  } else {
+                    dungeonCrawlerGame.interactWithContent();
+                  }
                 }
 
-                if (this.map[y][x].type == 'wall') {
-                  alert('You\'ve hit a wall');
+                if (dungeonCrawlerGame.map[y][x].type == 'wall') {
+                  $messageDiv.innerHTML = 'You\'ve hit a wall';
                   x++;
+                  dungeonCrawlerGame.drawMap();
                 }
                 break;
               case 'right':
                 if (x + 1 > 2) {
-                  alert('You can\'t go there');
+                  $messageDiv.innerHTML = 'You can\'t go there';
                 } else {
                   x++;
-                  this.map[y][x].explored = true;
+                  dungeonCrawlerGame.map[y][x].explored = true;
+                  dungeonCrawlerGame.drawMap();
+                  if (!dungeonCrawlerGame.map[y][x].content) {
+                    $messageDiv.innerHTML = 'This room is empty';
+                  } else {
+                    dungeonCrawlerGame.interactWithContent();
+                  }
                 }
 
-                if (this.map[y][x].type == 'wall') {
-                  alert('You\'ve hit a wall');
+                if (dungeonCrawlerGame.map[y][x].type == 'wall') {
+                  $messageDiv.innerHTML = 'You\'ve hit a wall';
                   x--;
+                  dungeonCrawlerGame.drawMap();
                 }
                 break;
             }
@@ -705,14 +762,16 @@
           },
 
           lootChest() {
-            alert('In this room you\'ve found a chest!');
+            const $messageDiv = document.getElementById('messageDiv');
+
+            $messageDiv.innerHTML = 'In this room you\'ve found a chest!';
             const chestContent = this.determineChestContent();
             if (chestContent == 'potion') {
               this.player.hasPotion = true;
-              alert('You\'ve found a healing potion');
+              $messageDiv.innerHTML += '<br>' + 'You\'ve found a healing potion';
             } else if (chestContent == 'sword') {
               this.player.attack += 2;
-              alert('You\'ve found a good sword. You\'ve gained 2 attack');
+              $messageDiv.innerHTML += '<br>' + 'You\'ve found a good sword.' + '<br>' + 'You\'ve gained 2 attack';
             }
           },
 
@@ -724,15 +783,21 @@
           },
 
           fightSkeleton() {
-            alert('In this room you\'ve found a menacing skeleton');
-            while (this.player.hp > 0 && this.skeleton.hp > 0) {
+            const $messageDiv = document.getElementById('messageDiv');
+            $messageDiv.innerHTML = 'In this room you\'ve found a menacing skeleton';
+
+            const $skeletonStatsDiv = document.getElementById('skeletonStatsDiv');
+            $skeletonStatsDiv.classList.add('show');
+            $skeletonStatsDiv.classList.remove('hide');
+
+            /*while (this.player.hp > 0 && this.skeleton.hp > 0) {
               this.playerBattleTurn();
               if (this.player.choseToRun) {
                 this.player.choseToRun = false;
                 return;
               }
               this.skeletonBattleTurn();
-            }
+            }*/
 
             if (this.player.hp <= 0) {
               alert('Skeleton cuts off your head!');
