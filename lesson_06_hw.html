@@ -213,6 +213,11 @@
         height: 50px;
         font-size: 28px;
       }
+      .controlButton {
+        width: 150px;
+        height: 50px;
+        font-size: 24px;
+      }
       #messageDiv {
         margin: 10px 10px 10px 10px;
         float: right;
@@ -601,7 +606,6 @@
             attack: 1,
             hp: 10,
             choseToRun: false,
-            hasWon: false
           },
           chestConentArr: ['potion', 'sword'],
           skeleton: {
@@ -671,6 +675,9 @@
             const $skeletonHP = document.createElement('p');
             $skeletonHP.innerHTML = `Skeleton's HP: ${this.skeleton.hp}/10`;
             $skeletonStatsDiv.appendChild($skeletonHP);
+            const $skeletonAttack = document.createElement('p');
+            $skeletonAttack.innerHTML = `Skeleton attack: ${this.skeleton.attack}`;
+            $skeletonStatsDiv.appendChild($skeletonAttack);
           },
 
           drawControls() {
@@ -682,6 +689,7 @@
             ];
 
             const $dungeonCrawlerControls = document.getElementById('dungeonCrawlerControls');
+            $dungeonCrawlerControls.innerHTML = '';
 
             const $controlsDiv = document.createElement('div');
             $controlsDiv.setAttribute('id', 'controlsDiv');
@@ -699,9 +707,28 @@
             }
 
             const $messageDiv = document.createElement('div');
-            $messageDiv.innerHTML = 'To win the game defeat the enemy';
+            $messageDiv.innerHTML = `${this.player.choseToRun ? 'You\'ve chosen to run' : 'To win the game defeat the enemy'}`;
+            this.player.choseToRun = false;
             $messageDiv.setAttribute('id', 'messageDiv');
             $dungeonCrawlerControls.appendChild($messageDiv);
+          },
+
+          drawBattleControls() {
+            const $controlsDiv = document.getElementById('controlsDiv');
+            $controlsDiv.innerHTML = '';
+
+            const buttonTexts = ['Attack', 'Drink potion', 'Run'];
+            const buttonIDs = ['attackButton', 'drinkButton', 'runButton'];
+            const eventLinsteners = [this.playerAttack, this.drinkPotion, this.runFromFight];
+
+            for (var i = 0; i < buttonTexts.length; i++) {
+              const $controlButton = document.createElement('button');
+              $controlButton.innerHTML = buttonTexts[i];
+              $controlButton.classList.add('controlButton');
+              $controlButton.setAttribute('id', buttonIDs[i]);
+              $controlButton.addEventListener('click', eventLinsteners[i]);
+              $controlsDiv.appendChild($controlButton);
+            }
           },
 
           movePlayer(event) {
@@ -837,95 +864,102 @@
             $skeletonStatsDiv.classList.add('show');
             $skeletonStatsDiv.classList.remove('hide');
 
-            /*while (this.player.hp > 0 && this.skeleton.hp > 0) {
-              this.playerBattleTurn();
-              if (this.player.choseToRun) {
-                this.player.choseToRun = false;
-                return;
-              }
-              this.skeletonBattleTurn();
-            }*/
-
-            if (this.player.hp <= 0) {
-              alert('Skeleton cuts off your head!');
-            } else if (this.skeleton.hp <= 0) {
-              alert('You\'ve defeated the evil skeleton!');
-              this.player.hasWon = true;
-            }
+            this.drawBattleControls();
           },
 
-          playerBattleTurn() {
-            const action = prompt(`Your HP: ${this.player.hp}\nSkeleton's HP: ${this.skeleton.hp}\nTo attack enter a\nTo drink potion enter p\nTo run press r`);
-            if (action == 'a') {
-              alert('You swing your sword wildly');
-              const isHit = this.isHit();
-              if (isHit) {
-                alert('You\'ve hit the skeleton');
-                this.skeleton.hp -= this.player.attack;
-              } else {
-                alert('You\'ve missed the skeleton');
-              }
-            } else if (action == 'p') {
-              if (this.player.hasPotion) {
-                alert('The potion invigorates you. You\'ve gained 3 HP')
-                this.player.hp += 3;
-                if (this.player.hp > 10) {
-                  this.player.hp = 10;
-                }
-                this.player.hasPotion = false;
-              } else {
-                alert('You have no potion to drink');
-              }
-            } else if (action == 'r') {
-              alert('You\'ve chosen to run');
-              x--;
-              this.player.choseToRun = true;
-              return;
+          playerAttack(event) {
+            const $messageDiv = document.getElementById('messageDiv');
+            $messageDiv.innerHTML = 'You swing your sword wildly';
+
+            const isHit = dungeonCrawlerGame.isHit();
+            if (isHit) {
+              dungeonCrawlerGame.skeleton.hp -= dungeonCrawlerGame.player.attack;
+              $messageDiv.innerHTML += '. You\'ve hit the skeleton';
+              const $skeletonHP = document.getElementById('skeletonStatsDiv').children[0];
+              $skeletonHP.innerHTML = `Skeleton's HP: ${dungeonCrawlerGame.skeleton.hp}/10`;
             } else {
-              alert('You\'ve lost your wits and do nothing');
+              $messageDiv.innerHTML += '. You\'ve missed the skeleton';
+            }
+
+            dungeonCrawlerGame.skeletonAttack();
+          },
+
+          drinkPotion(event) {
+            const $messageDiv = document.getElementById('messageDiv');
+
+            if (dungeonCrawlerGame.player.hasPotion) {
+              $messageDiv.innerHTML = 'The potion invigorates you. You\'ve gained 3 HP';
+
+              dungeonCrawlerGame.player.hp += 3;
+              if (dungeonCrawlerGame.player.hp > 10) {
+                dungeonCrawlerGame.player.hp = 10;
+              }
+              const $hp = document.getElementById('playerStatsDiv').children[0];
+              $hp.innerHTML = `Your HP: ${dungeonCrawlerGame.player.hp}/10`;
+              dungeonCrawlerGame.player.hasPotion = false;
+
+              const $potion = document.getElementById('playerStatsDiv').children[2];
+              $potion.classList.remove('show');
+
+              dungeonCrawlerGame.skeletonAttack()
+            } else {
+              $messageDiv.innerHTML = 'You have no potion to drink';
             }
           },
 
-          skeletonBattleTurn() {
-            alert('Skeleton attacks you!');
+          runFromFight(event) {
+            dungeonCrawlerGame.map[y][x].content = 'skeleton';
+            x--;
+            dungeonCrawlerGame.player.choseToRun = true;
+            dungeonCrawlerGame.drawMap();
+            dungeonCrawlerGame.drawControls();
+          },
+
+          skeletonAttack() {
+            const $messageDiv = document.getElementById('messageDiv');
+            $messageDiv.innerHTML += '<br>' + 'Skeleton attacks you!';
+
             const isHit = this.isHit();
             if (isHit) {
-              alert('It hits you');
               this.player.hp -= this.skeleton.attack;
+              $messageDiv.innerHTML += ' It hits you';
+              const $hp = document.getElementById('playerStatsDiv').children[0];
+              $hp.innerHTML = `Your HP: ${this.player.hp}/10`;
             } else {
-              alert('It misses');
+              $messageDiv.innerHTML += ' It misses';
+            }
+
+            this.checkForEndGame();
+          },
+
+          checkForEndGame() {
+            const $dungeonCrawlerControls = document.getElementById('dungeonCrawlerControls');
+            const $hp = document.getElementById('playerStatsDiv').children[0];
+            const $skeletonHP = document.getElementById('skeletonStatsDiv').children[0];
+
+            if (this.player.hp < 1 && this.skeleton.hp < 1) {
+              $dungeonCrawlerControls.innerHTML = '';
+              $dungeonCrawlerControls.innerHTML = 'Skeleton cuts off your head as you finish him. You both fall to the floor';
+              this.player.hp = 0;
+              this.skeleton.hp = 0;
+              $hp.innerHTML = `Your HP: ${this.player.hp}/10`;
+              $skeletonHP.innerHTML = `Skeleton's HP: ${dungeonCrawlerGame.skeleton.hp}/10`;
+            } else if (this.player.hp < 1) {
+              $dungeonCrawlerControls.innerHTML = '';
+              $dungeonCrawlerControls.innerHTML = 'Skeleton cuts off your head! You died and lost the game';
+              this.player.hp = 0;
+              $hp.innerHTML = `Your HP: ${this.player.hp}/10`;
+            } else if (this.skeleton.hp < 1) {
+              $dungeonCrawlerControls.innerHTML = '';
+              $dungeonCrawlerControls.innerHTML = 'You\'ve defeated the evil skeleton and won the game! Congratulations!';
+              this.skeleton.hp = 0;
+              $skeletonHP.innerHTML = `Skeleton's HP: ${dungeonCrawlerGame.skeleton.hp}/10`;
             }
           },
 
           isHit() {
             return Math.random() >= 0.3;
           },
-
-          turn() {
-            alert('To win the game defeat the enemy');
-            while (true) {
-              this.drawMap();
-              this.movePlayer();
-              this.interactWithContent();
-              if (this.player.hasWon || this.player.hp <= 0) {
-                break;
-              }
-              toQuit = prompt('To quit the game press q');
-              if (toQuit == 'q') {
-                return;
-              }
-            }
-
-            this.endGame();
-          },
-
-          endGame() {
-            if (this.player.hasWon) {
-              alert('You\'ve won the game!');
-            } else {
-              alert('You\'ve lost the game and died');
-            }
-          }
         }
 
         // Destructuring
