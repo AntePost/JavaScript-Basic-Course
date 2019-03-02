@@ -1043,7 +1043,6 @@
         const chessBoard = {
           width: 8,
           height: 8,
-          letterArr: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
 
           // Сделал шахматную доску с динамически задаваемым размером
           drawChessBoard() {
@@ -1062,7 +1061,7 @@
                 // Если первая или последняя строка, то присваиваем ячейкам буквы (но не в первом или последнем столбце)
                 if (i === 0 || i === (this.height + 1)) {
                   if (!(j === 0) && !(j === (this.width + 1))) {
-                    $chessBoardCell.innerHTML = this.letterArr[j - 1];
+                    $chessBoardCell.innerHTML = String.fromCharCode(64 + j);
                   }
                   // Если первая строка, то поворачиваем буквы
                   if (i === 0) {
