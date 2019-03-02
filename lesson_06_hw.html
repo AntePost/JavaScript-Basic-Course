@@ -833,10 +833,9 @@
           interactWithContent() {
             if (this.map[y][x].content == 'chest') {
               this.lootChest();
-              this.map[y][x].content = null;
+              this.map[y][x].content = 'openChest';
             } else if (this.map[y][x].content == 'skeleton') {
               this.fightSkeleton();
-              this.map[y][x].content = null;
             }
           },
 
@@ -914,7 +913,6 @@
           },
 
           runFromFight(event) {
-            dungeonCrawlerGame.map[y][x].content = 'skeleton';
             x--;
             dungeonCrawlerGame.player.choseToRun = true;
             dungeonCrawlerGame.drawMap();
@@ -976,8 +974,29 @@
             }
           },
 
-          resetGame() {
-            alert('Work in progress');
+          resetGame(event) {
+            for (var i = 0; i < dungeonCrawlerGame.map.length; i++) {
+              for (var j = 0; j < dungeonCrawlerGame.map[i].length; j++) {
+                if (i != 0 || j != 0) {
+                  dungeonCrawlerGame.map[i][j].explored = false;
+                  if (dungeonCrawlerGame.map[i][j].content == 'openChest') {
+                    dungeonCrawlerGame.map[i][j].content = 'chest';
+                  }
+                }
+              }
+            }
+
+            x = 0;
+            y = 0
+            dungeonCrawlerGame.player.hasPotion = false;
+            dungeonCrawlerGame.player.attack = 1;
+            dungeonCrawlerGame.player.hp = 10;
+            dungeonCrawlerGame.chestConentArr = ['potion', 'sword'];
+            dungeonCrawlerGame.skeleton.hp = 10;
+            dungeonCrawlerGame.gameEnded = false;
+
+            dungeonCrawlerGame.drawMap();
+            dungeonCrawlerGame.drawControls();
           },
 
           isHit() {
