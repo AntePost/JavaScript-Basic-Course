@@ -159,6 +159,7 @@
       .mapCell {
         width: 100px;
         height: 100px;
+        position: relative;
       }
       .unexplored {
         background-color: darkgray;
@@ -173,6 +174,18 @@
       }
       .player {
         height: 50px;
+      }
+      .chest {
+        height: 40px;
+        position: absolute;
+        bottom: 2px;
+        right: 6px;
+      }
+      .skeleton {
+        height: 40px;
+        position: absolute;
+        bottom: 7px;
+        right: 7px;
       }
       #playerStatsDiv {
         position: absolute;
@@ -648,11 +661,26 @@
                   }
                 }
                 $mapContainer.appendChild($mapCell);
+
                 if (i === y && j === x) {
                   const $playerImg = document.createElement('img');
                   $playerImg.src = 'http://pixelartmaker.com/art/4fe55c1d90ee939.png';
                   $playerImg.classList.add('player');
                   $mapCell.appendChild($playerImg);
+                }
+
+                if (this.map[i][j].content == 'openChest') {
+                  const $chest = document.createElement('img');
+                  $chest.src = 'https://cdn1.iconfinder.com/data/icons/great-pirates-filled/96/FilledTresureOpen-512.png';
+                  $chest.classList.add('chest');
+                  $mapCell.appendChild($chest);
+                }
+
+                if (this.map[i][j].content == 'skeleton' && this.map[i][j].explored) {
+                  const $skeleton = document.createElement('img');
+                  $skeleton.src = 'https://www.freeiconspng.com/uploads/living-skeleton-png-25.png';
+                  $skeleton.classList.add('skeleton');
+                  $mapCell.appendChild($skeleton);
                 }
               }
             }
@@ -832,8 +860,8 @@
 
           interactWithContent() {
             if (this.map[y][x].content == 'chest') {
-              this.lootChest();
               this.map[y][x].content = 'openChest';
+              this.lootChest();
             } else if (this.map[y][x].content == 'skeleton') {
               this.fightSkeleton();
             }
