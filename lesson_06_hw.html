@@ -717,8 +717,8 @@
           drawControls() {
             const ArrowArr = [
               '<i class="fas fa-arrow-up"></i>',
-              '<i class="fas fa-arrow-right"></i>',
               '<i class="fas fa-arrow-left"></i>',
+              '<i class="fas fa-arrow-right"></i>',
               '<i class="fas fa-arrow-down"></i>',
             ];
 
@@ -729,7 +729,7 @@
             $controlsDiv.setAttribute('id', 'controlsDiv');
             $dungeonCrawlerControls.appendChild($controlsDiv);
 
-            const directions = ['up', 'right', 'left', 'down',];
+            const directions = ['up', 'left', 'right', 'down',];
 
             for (var i = 0; i < ArrowArr.length; i++) {
               const $moveArrow = document.createElement('button');
