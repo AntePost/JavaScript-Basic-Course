@@ -106,6 +106,7 @@
         font-size: inherit;
         margin-left: 50px;
       }
+
       .modalWrapper {
         display: none;
         position: fixed;
@@ -145,6 +146,42 @@
         position: absolute;
         top: 45%;
         right: 0;
+      }
+
+      #template {
+        display: none;
+      }
+
+      #productContainer {
+        width: 1002px;
+        margin: 10px auto 0;
+        padding: 10px 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      .product {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+      }
+      .product:nth-child(n + 4) {
+        margin-top: 10px;
+      }
+      .product h6 {
+        margin: 10px 0;
+      }
+      .product img {
+        width: 200px;
+        margin: 0 auto;
+      }
+      .product p {
+        font-size: 18px;
+        margin: 0 10px;
+      }
+      .product button {
+        width: 120px;
+        margin: 0 auto 10px;
       }
 
       .show {
@@ -187,6 +224,15 @@
               'https://upload.wikimedia.org/wikipedia/commons/4/43/48974389.jpg',
               'https://upload.wikimedia.org/wikipedia/commons/d/d9/49016356.jpg',
             ]},
+          ],
+          nOfProducts: 6,
+          products: [
+            {name: 'Product 1', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 100,},
+            {name: 'Product 2', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 200,},
+            {name: 'Product 3', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 300,},
+            {name: 'Product 4', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 400,},
+            {name: 'Product 5', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 500,},
+            {name: 'Product 6', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 600,},
           ],
 
           countBasketPrice() {
@@ -252,7 +298,7 @@
               const $itemList = document.createElement('ol');
               $basket.appendChild($itemList);
               for (var i = 0; i < this.items.length; i++) {
-                const liText = `There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of '${this.items[i].name}' (price: ${this.items[i].price}) (<a href='#'>pictures</a>)`;
+                const liText = `There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of '${this.items[i].name}' (price: ${this.items[i].price})${this.items[i].pictures ? ' (<a href=\'#\'>pictures</a>)' : ''}`;
                 const $liItem = document.createElement('li');
                 $liItem.innerHTML = liText;
                 $itemList.appendChild($liItem);
@@ -514,13 +560,69 @@
             } else {
               event.target.parentElement.nextElementSibling.classList.toggle('collapsed');
             }
-          }
+          },
+
+          displayProducts() {
+            const $productContainer = document.getElementById('productContainer');
+            const $template = document.getElementById('template');
+            for (var i = 0; i < 6; i++) {
+              const $product = $template.children[0].cloneNode(true);
+              $product.querySelector('.name').innerHTML = this.products[i].name;
+              $product.querySelector('img').src = this.products[i].image;
+              $product.querySelector('.desc').innerHTML = this.products[i].desc;
+              $product.querySelector('.price').innerHTML = this.products[i].price + ' ' + this.currency.toUpperCase();
+
+              const $buyButton = $product.querySelector('button');
+              $buyButton.innerHTML = 'Add to basket';
+              $buyButton.addEventListener('click', this.handleBuyButtonClick);
+              $buyButton.id = 'buyButton_' + i;
+              $productContainer.appendChild($product);
+            }
+          },
+
+          handleBuyButtonClick(event) {
+            const productName = event.target.parentElement.firstElementChild.innerHTML;
+            const isAlreadyInBasket = basket.isAlreadyInBasket(productName);
+
+            if (isAlreadyInBasket) {
+              for (var i = 0; i < basket.items.length; i++) {
+                if (basket.items[i].name === productName) {
+                  basket.items[i].quantity++;
+                }
+              }
+            } else {
+              const newItem = {};
+              newItem.name = productName;
+              const numOfProduct = event.target.id.split('_')[1];
+              newItem.price = basket.products[numOfProduct].price;
+              newItem.quantity = 1;
+              basket.items.push(newItem);
+            }
+            basket.displayItems();
+            basket.redrawSelects();
+            basket.prepareCollapsable();
+          },
+
+          isAlreadyInBasket(productName) {
+            const $basket = document.getElementById('basket');
+            if (!$basket.getElementsByTagName('ol').length) {
+              return false;
+            }
+            const $itemList = document.getElementsByTagName('ol')[0].children;
+            for (var i = 0; i < $itemList.length; i++) {
+              if ($itemList[i].innerHTML.includes(productName)) {
+                return true;
+              }
+            }
+            return false;
+          },
         }
 
         basket.displayItems();
         basket.displayControls();
         basket.prepareModal();
         basket.prepareCollapsable();
+        basket.displayProducts();
       }
 
       window.onload = wrapperFunc;
@@ -547,5 +649,17 @@
       <button class='nextButton'>Return to basket</button>
     </div>
     <div id='basketControls'></div>
+    <div id='template'>
+      <div class="product">
+        <h6 class='name'></h6>
+        <img src="" alt="">
+        <p class='desc'></p>
+        <span class='price'></span>
+        <button class="buyButton"></button>
+      </div>
+    </div>
+    <div id='productContainer'>
+
+    </div>
   </body>
 </html>
