@@ -17,10 +17,43 @@
 
       #basket {
         width: 1002px;
-        margin: 0 auto;
+        margin: 0 auto 10px;
+        overflow: hidden;
       }
       ol {
         text-align: left;
+      }
+      .nextButton {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin-bottom: 10px;
+      }
+
+      #deliveryAdress {
+        width: 1002px;
+        margin: 0 auto 10px;
+        overflow: hidden;
+      }
+      #deliveryAdress h2 {
+        font-size: 24px;
+      }
+      #deliveryAdress textarea {
+        display: block;
+        margin: 0 auto 10px;
+      }
+
+      #comment {
+        width: 1002px;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+      #comment h2 {
+        font-size: 24px;
+      }
+      #comment textarea {
+        display: block;
+        margin: 0 auto 10px;
       }
 
       #basketControls {
@@ -119,6 +152,10 @@
       }
       .hide {
         display: none;
+      }
+      .collapsed {
+        height: 10px;
+        background-color: grey;
       }
     </style>
     <script>
@@ -227,6 +264,12 @@
                 $linksArr[i].addEventListener('click', this.openModalWindow);
               }
             }
+
+            // Добавляем кнопку для продолжения оформления заказа
+            const $nextButton = document.createElement('button');
+            $nextButton.innerHTML = 'Next';
+            $nextButton.classList.add('nextButton');
+            $basket.appendChild($nextButton);
           },
 
           changeQuantity(event) {
@@ -454,11 +497,30 @@
               }
             }
           },
+
+          prepareCollapsable() {
+            const $nextButtons = document.getElementsByClassName('nextButton');
+            for (var i = 0; i < $nextButtons.length; i++) {
+              $nextButtons[i].addEventListener('click', this.handleNextButtonClick);
+            }
+          },
+
+          handleNextButtonClick(event) {
+            const $basket = document.getElementById('basket');
+
+            event.target.parentElement.classList.toggle('collapsed');
+            if (event.target.parentElement.nextElementSibling.id == 'basketControls') {
+              $basket.classList.toggle('collapsed');
+            } else {
+              event.target.parentElement.nextElementSibling.classList.toggle('collapsed');
+            }
+          }
         }
 
         basket.displayItems();
         basket.displayControls();
         basket.prepareModal();
+        basket.prepareCollapsable();
       }
 
       window.onload = wrapperFunc;
@@ -466,13 +528,23 @@
   </head>
   <body>
     <h1>Exercises 1 & 2</h1>
-    <div id='basket'></div>
     <div class="modalWrapper">
       <div class='modalWindow'>
         <span class="close">&times;</span>
         <i class="fas fa-arrow-left" id='ArrowLeft'></i>
         <i class="fas fa-arrow-right" id='ArrowRight'></i>
       </div>
+    </div>
+    <div id='basket'></div>
+    <div id='deliveryAdress' class="collapsed">
+      <h2>Enter delivery address</h2>
+      <textarea rows="8" cols="80"></textarea>
+      <button class='nextButton'>Next</button>
+    </div>
+    <div id='comment' class="collapsed">
+      <h2>Enter your comment</h2>
+      <textarea rows="8" cols="80"></textarea>
+      <button class='nextButton'>Return to basket</button>
     </div>
     <div id='basketControls'></div>
   </body>
