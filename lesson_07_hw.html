@@ -595,12 +595,10 @@
                 }
               }
             } else {
-              const newItem = {};
-              newItem.name = productName;
+              const name = productName;
               const numOfProduct = event.target.id.split('_')[1];
-              newItem.price = basket.products[numOfProduct].price;
-              newItem.quantity = 1;
-              basket.items.push(newItem);
+              const price = basket.products[numOfProduct].price;
+              basket.items.push(new Product(name, price, 1));
             }
             basket.displayItems();
             basket.redrawSelects();
