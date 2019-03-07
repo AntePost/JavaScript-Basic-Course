@@ -242,8 +242,8 @@
             return sum;
           },
 
-          constBasketItems() {
-            let sum = this.items.reduce((acc, cur) => {
+          countBasketItems() {
+            const sum = this.items.reduce((acc, cur) => {
               return acc + cur.quantity;
             }, 0);
             return sum;
@@ -281,7 +281,7 @@
           displayItems() {
             const $basket = document.getElementById('basket');
             $basket.innerHTML = '';
-            const totalItems = this.constBasketItems();
+            const totalItems = this.countBasketItems();
 
             if (totalItems === 0) {
               const totalText = 'The basket is empty';
@@ -565,6 +565,7 @@
           displayProducts() {
             const $productContainer = document.getElementById('productContainer');
             const $template = document.getElementById('template');
+            $productContainer.addEventListener('click', this.handleBuyButtonClick);
             for (var i = 0; i < 6; i++) {
               const $product = $template.children[0].cloneNode(true);
               $product.querySelector('.name').innerHTML = this.products[i].name;
@@ -574,13 +575,16 @@
 
               const $buyButton = $product.querySelector('button');
               $buyButton.innerHTML = 'Add to basket';
-              $buyButton.addEventListener('click', this.handleBuyButtonClick);
               $buyButton.id = 'buyButton_' + i;
               $productContainer.appendChild($product);
             }
           },
 
           handleBuyButtonClick(event) {
+            if (event.target.tagName !== 'BUTTON') {
+              return;
+            }
+
             const productName = event.target.parentElement.firstElementChild.innerHTML;
             const isAlreadyInBasket = basket.isAlreadyInBasket(productName);
 
@@ -604,8 +608,7 @@
           },
 
           isAlreadyInBasket(productName) {
-            const $basket = document.getElementById('basket');
-            if (!$basket.getElementsByTagName('ol').length) {
+            if (!this.items.length) {
               return false;
             }
             const $itemList = document.getElementsByTagName('ol')[0].children;
