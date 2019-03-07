@@ -324,7 +324,7 @@
           },
 
           constBasketItems() {
-            let sum = this.items.reduce((acc, cur) => {
+            const sum = this.items.reduce((acc, cur) => {
               return acc + cur.quantity;
             }, 0);
             return sum;
