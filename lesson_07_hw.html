@@ -204,7 +204,7 @@
       }
       table {
         border-collapse: collapse;
-        margin-top: 10px;
+        margin: 10px 0;
       }
       .gameCell {
         width: 20px;
@@ -215,13 +215,24 @@
       .snake {
         background-color: green;
       }
+      .snakeHead {
+        background-color: DarkOliveGreen;
+      }
       .food {
         background-color: red;
+      }
+      #gameControls {
+        width: 501px;
+        margin: 10px auto 0;
       }
       #gameStart {
         width: 150px;
         height: 30px;
         margin: 10px 0;
+      }
+      #labelForCheckbox {
+        font-size: 14px;
+        display: inline-block;
       }
     </style>
     <script>
@@ -655,17 +666,32 @@
         basket.displayProducts();
 
         const snakeGame = {
-          fieldHeight: 20,
-          fieldWidth: 20,
-          $gamefield: document.getElementById('gameField'),
+          fieldHeight: null,
+          fieldWidth: null,
+          $gamefield: null,
           snakeX: null,
           snakeY: null,
           directon: 'top',
           snake: [],
-          interval: 500,
+          interval: null,
           clearInterval: null,
+          shouldTeleportSnake: null,
 
-          drawGameFieldAndControls() {
+          prepareSnake() {
+            const $gameStart = document.getElementById('gameStart');
+            $gameStart.addEventListener('click', this.handleGameStartClick);
+
+            window.addEventListener('keydown', this.handleAnywhereKeydown);
+          },
+
+          drawGameField() {
+            const $gameContainer = document.getElementById('gameContainer');
+            $gameContainer.innerHTML = '';
+
+            this.$gamefield = document.createElement('table');
+            this.$gamefield.id = 'gameField';
+            $gameContainer.appendChild(this.$gamefield);
+
             for (var i = 0; i < this.fieldHeight; i++) {
               const $gameRow = document.createElement('tr');
               for (var j = 0; j < this.fieldWidth; j++) {
@@ -675,11 +701,6 @@
               }
               this.$gamefield.appendChild($gameRow);
             }
-
-            const $gameStart = document.getElementById('gameStart');
-            $gameStart.addEventListener('click', this.handleGameStartClick);
-
-            window.addEventListener('keydown', this.handleAnywhereKeydown);
           },
 
           drawSnake() {
@@ -687,7 +708,7 @@
             this.snakeY = Math.floor(this.fieldHeight /2);
 
             const $snakeHead = this.$gamefield.children[this.snakeY].children[this.snakeX];
-            $snakeHead.classList.add('snake');
+            $snakeHead.classList.add('snakeHead');
 
             const $snakeTail = this.$gamefield.children[this.snakeY + 1].children[this.snakeX];
             $snakeTail.classList.add('snake');
@@ -697,6 +718,13 @@
           },
 
           handleGameStartClick(event) {
+            snakeGame.fieldHeight = +document.getElementById('inputHeight').value;
+            snakeGame.fieldWidth = +document.getElementById('inputWidth').value;
+            snakeGame.interval = +document.getElementById('inputStartInterval').value;
+            snakeGame.shouldTeleportSnake = document.getElementById('labelForCheckbox').children[0].checked;
+
+            snakeGame.drawGameField();
+
             snakeGame.drawSnake();
 
             snakeGame.snakeInterval = setInterval(snakeGame.moveSnake, snakeGame.interval);
@@ -704,7 +732,6 @@
           },
 
           moveSnake() {
-            console.log(snakeGame.snakeY);
             switch (snakeGame.directon) {
               case 'top':
                 snakeGame.snakeY--;
@@ -720,7 +747,7 @@
                 break;
             }
 
-            if (!snakeGame.isInBounds()) {
+            if (!snakeGame.isInBounds() && snakeGame.teleportSnake) {
               snakeGame.teleportSnake();
             }
 
@@ -730,8 +757,12 @@
             }
 
             if (snakeGame.isInBounds() && !snakeGame.isSnake($newSnakeCell)) {
-              $newSnakeCell.classList.add('snake');
+              $newSnakeCell.classList.add('snakeHead');
               snakeGame.snake.push($newSnakeCell);
+
+              const $previousSnakeCell = snakeGame.snake[snakeGame.snake.length - 2];
+              $previousSnakeCell.classList.remove('snakeHead');
+              $previousSnakeCell.classList.add('snake');
 
               if (!$newSnakeCell.classList.contains('food')) {
                 const $lastSnakeCell = snakeGame.snake.shift();
@@ -808,6 +839,7 @@
             this.directon = 'top';
             for (var i = 0; i < this.snake.length; i++) {
               this.snake[i].classList.remove('snake');
+              this.snake[i].classList.remove('snakeHead');
             }
             this.snake = [];
             const $food = document.getElementsByClassName('food')[0];
@@ -827,7 +859,7 @@
           },
         };
 
-        snakeGame.drawGameFieldAndControls();
+        snakeGame.prepareSnake();
       }
 
       window.onload = wrapperFunc;
@@ -865,9 +897,18 @@
     </div>
     <div id='productContainer'></div>
     <h1>Exercise 3</h1>
-    <div id='gameContainer'>
-      <table id='gameField'></table>
+    <div id='gameControls'>
+      <input id='inputWidth' placeholder="Enter gamefield width" type="number">
+      <input id='inputHeight' placeholder="Enter gamefield height" type="number">
+      <input id="inputStartInterval" placeholder="Enter turn interval in ms" type="number">
+      <label id='labelForCheckbox'>
+        Teleport snake?
+        <input type="checkbox">
+      </label>
       <button id='gameStart'>Start new game</button>
+    </div>
+    <div id='gameContainer'>
+      <span>Set gamefield width and height</span>
     </div>
   </body>
 </html>
