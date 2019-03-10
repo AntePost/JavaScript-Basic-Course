@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Lesson 7 Homework</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <style>
+      h1 {
+        text-align: center;
+      }
+      div {
+        box-sizing: border-box;
+        border: 1px solid black;
+        text-align: center;
+        font-size: 32px;
+      }
+
+      #basket {
+        width: 1002px;
+        margin: 0 auto 10px;
+        overflow: hidden;
+      }
+      ol {
+        text-align: left;
+      }
+      .nextButton {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin-bottom: 10px;
+      }
+
+      #deliveryAdress {
+        width: 1002px;
+        margin: 0 auto 10px;
+        overflow: hidden;
+      }
+      #deliveryAdress h2 {
+        font-size: 24px;
+      }
+      #deliveryAdress textarea {
+        display: block;
+        margin: 0 auto 10px;
+      }
+
+      #comment {
+        width: 1002px;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+      #comment h2 {
+        font-size: 24px;
+      }
+      #comment textarea {
+        display: block;
+        margin: 0 auto 10px;
+      }
+
+      #basketControls {
+        width: 1002px;
+        margin: 10px auto 0;
+        text-align: inherit;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #clearBasket {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin: 10px;
+      }
+      #addItem {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+      }
+      form {
+        margin: 10px;
+        text-align: center;
+        display: flex;
+      }
+      label {
+        display: flex;
+        flex-direction: column;
+      }
+      input {
+        margin: 10px 10px 0 0;
+      }
+      select {
+        font-size: inherit;
+        height: 50px;
+      }
+      span {
+        margin: 0 50px;
+      }
+      #changeQuantity {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin-left: 50px;
+      }
+      #removeItem {
+        height: 80px;
+        width: 200px;
+        font-size: inherit;
+        margin-left: 50px;
+      }
+
+      .modalWrapper {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+        border: none;
+      }
+      .modalWindow {
+        position: absolute;
+        top: 20%;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        width: 250px;
+        height: 200px;
+        border: none;
+      }
+      .close {
+        color: #000;
+        float: right;
+        margin: 0;
+        cursor: pointer;
+        line-height: 15px;
+      }
+      #ArrowLeft {
+        position: absolute;
+        top: 45%;
+        left: 0;
+      }
+      #ArrowRight {
+        position: absolute;
+        top: 45%;
+        right: 0;
+      }
+
+      #template {
+        display: none;
+      }
+
+      #productContainer {
+        width: 1002px;
+        margin: 10px auto 0;
+        padding: 10px 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      .product {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+      }
+      .product:nth-child(n + 4) {
+        margin-top: 10px;
+      }
+      .product h6 {
+        margin: 10px 0;
+      }
+      .product img {
+        width: 200px;
+        margin: 0 auto;
+      }
+      .product p {
+        font-size: 18px;
+        margin: 0 10px;
+      }
+      .product button {
+        width: 120px;
+        margin: 0 auto 10px;
+      }
+
+      .show {
+        display: block;
+      }
+      .hide {
+        display: none;
+      }
+      .collapsed {
+        height: 10px;
+        background-color: grey;
+      }
+
+      #gameContainer {
+        width: 1002px;
+        margin: 10px auto 0;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+      table {
+        border-collapse: collapse;
+        margin: 10px 0;
+      }
+      .gameCell {
+        width: 20px;
+        height: 20px;
+        background-color: grey;
+        border: 1px solid black;
+      }
+      .snake {
+        background-color: green;
+      }
+      .snakeHead {
+        background-color: DarkOliveGreen;
+      }
+      .food {
+        background-color: red;
+      }
+      #gameControls {
+        width: 501px;
+        margin: 10px auto 0;
+      }
+      #gameStart {
+        width: 150px;
+        height: 30px;
+        margin: 10px 0;
+      }
+      #labelForCheckbox {
+        font-size: 14px;
+        display: inline-block;
+      }
+    </style>
+    <script>
+      function wrapperFunc() {
+        // Exercises 1, 2 & 4
+        class Product {
+          constructor(name, price, quantity) {
+            this.name = name;
+            this.price = price;
+            this.quantity = quantity;
+          }
+        }
+
+        const basket = {
+          currency: 'usd',
+          items: [
+            {name: 'Product 1', price: 500, quantity: 1, curSelectPicture: 0, pictures: [
+              'https://upload.wikimedia.org/wikipedia/commons/d/d5/1-PA250210%2C_The_old_temple_has_taken_over_by_the_new_one.JPG',
+              'https://upload.wikimedia.org/wikipedia/commons/4/4f/1-PA250215%2C_The_new_temple.JPG',
+              'https://upload.wikimedia.org/wikipedia/commons/0/05/1-PA250222_At_Sarakki%2C.JPG',
+            ]},
+            {name: 'Product 2', price: 200, quantity: 2, curSelectPicture: 0, pictures: [
+              'https://upload.wikimedia.org/wikipedia/commons/7/72/1000BlueBull.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/6/62/102Cervus.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/f/f0/10BlackBuck.jpg',
+            ]},
+            {name: 'Product 3', price: 100, quantity: 3, curSelectPicture: 0, pictures: [
+              'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/4/43/48974389.jpg',
+              'https://upload.wikimedia.org/wikipedia/commons/d/d9/49016356.jpg',
+            ]},
+          ],
+          nOfProducts: 6,
+          products: [
+            {name: 'Product 1', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 100,},
+            {name: 'Product 2', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 200,},
+            {name: 'Product 3', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 300,},
+            {name: 'Product 4', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 400,},
+            {name: 'Product 5', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 500,},
+            {name: 'Product 6', desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit', image: 'https://upload.wikimedia.org/wikipedia/commons/9/94/48841893.jpg', price: 600,},
+          ],
+
+          countBasketPrice() {
+            let sum = this.items.reduce((acc, cur) => {
+              return acc + cur.price * cur.quantity;
+            }, 0);
+            return sum;
+          },
+
+          countBasketItems() {
+            const sum = this.items.reduce((acc, cur) => {
+              return acc + cur.quantity;
+            }, 0);
+            return sum;
+          },
+
+          clearBasket(event) {
+            basket.items = [];
+            basket.displayItems();
+            basket.redrawSelects()
+          },
+
+          addItemToBasket(event) {
+            event.preventDefault();
+            const name = document.getElementById('addItemNameInput').value;
+            const price = +document.getElementById('addItemPriceInput').value;
+            const quantity = +document.getElementById('addItemQuantityInput').value;
+            basket.items.push(new Product(name, price, quantity));
+            basket.displayItems();
+            basket.redrawSelects();
+          },
+
+          removeItemFromBasket(event) {
+            event.preventDefault();
+            const selectValue = document.getElementById('removeItemSelect').value;
+            for (var i = 0; i < basket.items.length; i++) {
+              if (basket.items[i].name == selectValue) {
+                basket.items.splice(i, 1);
+              }
+            }
+
+            basket.displayItems();
+            basket.redrawSelects();
+          },
+
+          displayItems() {
+            const $basket = document.getElementById('basket');
+            $basket.innerHTML = '';
+            const totalItems = this.countBasketItems();
+
+            if (totalItems === 0) {
+              const totalText = 'The basket is empty';
+              const $totalElem = document.createElement('p');
+              $totalElem.innerHTML = totalText;
+              $basket.appendChild($totalElem);
+            } else {
+              const totalText = `There ${totalItems === 1 ? 'is' : 'are'} ${totalItems} ${totalItems === 1 ? 'item' : 'items'} in the basket with total price of ${this.countBasketPrice()} ${this.currency.toUpperCase()}`;
+              const $totalElem = document.createElement('p');
+              $totalElem.innerHTML = totalText;
+
+              $basket.appendChild($totalElem);
+
+              const $itemList = document.createElement('ol');
+              $basket.appendChild($itemList);
+              for (var i = 0; i < this.items.length; i++) {
+                const liText = `There ${this.items[i].quantity === 1 ? 'is' : 'are'} ${this.items[i].quantity} ${this.items[i].quantity === 1 ? 'item' : 'items'} of '${this.items[i].name}' (price: ${this.items[i].price})${this.items[i].pictures ? ' (<a href=\'#\'>pictures</a>)' : ''}`;
+                const $liItem = document.createElement('li');
+                $liItem.innerHTML = liText;
+                $itemList.appendChild($liItem);
+              }
+
+              const $linksArr = $itemList.getElementsByTagName('a');
+              for (var i = 0; i < $linksArr.length; i++) {
+                $linksArr[i].setAttribute('id', 'pictureAnchor_' + [i]);
+                $linksArr[i].addEventListener('click', this.openModalWindow);
+              }
+            }
+
+            // Добавляем кнопку для продолжения оформления заказа
+            const $nextButton = document.createElement('button');
+            $nextButton.innerHTML = 'Next';
+            $nextButton.classList.add('nextButton');
+            $basket.appendChild($nextButton);
+          },
+
+          changeQuantity(event) {
+            event.preventDefault();
+            const selectValue = document.getElementById('changeQuantitySelect').value;
+            const inputValue = +document.getElementById('changeQuantityInput').value;
+
+            for (var i = 0; i < basket.items.length; i++) {
+              if (basket.items[i].name == selectValue) {
+                if (inputValue == 0) {
+                  basket.items.splice(i, 1);
+                } else {
+                  basket.items[i].quantity = inputValue;
+                }
+              }
+            }
+
+            basket.displayItems();
+            basket.redrawSelects();
+          },
+
+          handleSelectChange(event) {
+            const selectValue = document.getElementById('changeQuantitySelect').value;
+            const $changeQuantitySpan = document.getElementById('changeQuantitySpan');
+            for (var i = 0; i < basket.items.length; i++) {
+              if (basket.items[i].name == selectValue) {
+                $changeQuantitySpan.innerHTML = `Quantity: ${basket.items[i].quantity}`;
+              }
+            }
+          },
+
+          redrawSelects() {
+            const $changeQuantitySelect = document.getElementById('changeQuantitySelect');
+            $changeQuantitySelect.innerHTML = '';
+            for (var i = 0; i < this.items.length; i++) {
+              const $changeQuantityOption = document.createElement('option');
+              $changeQuantityOption.innerHTML = this.items[i].name;
+              $changeQuantitySelect.appendChild($changeQuantityOption);
+            }
+
+            const $removeItemSelect = document.getElementById('removeItemSelect');
+            $removeItemSelect.innerHTML = '';
+            for (var i = 0; i < this.items.length; i++) {
+              const $removeItemOption = document.createElement('option');
+              $removeItemOption.innerHTML = this.items[i].name;
+              $removeItemSelect.appendChild($removeItemOption);
+            }
+          },
+
+          displayControls() {
+            const $basketControls = document.getElementById('basketControls');
+
+            // Добавляем кнопку "очистить корзину"
+            const $clearBasketButton = document.createElement('button');
+            $clearBasketButton.innerHTML = 'Clear Basket';
+            $clearBasketButton.setAttribute('id', 'clearBasket');
+            $clearBasketButton.addEventListener('click', this.clearBasket);
+            $basketControls.appendChild($clearBasketButton);
+
+            // Добавляем форму для добавления товара в корзину
+            const $addItemForm = document.createElement('form');
+            $basketControls.appendChild($addItemForm);
+
+            const $addItemNameLabel = document.createElement('label');
+            $addItemNameLabel.innerHTML = 'Name';
+            $addItemForm.appendChild($addItemNameLabel);
+            const $addItemNameInput = document.createElement('input');
+            $addItemNameInput.setAttribute('id', 'addItemNameInput');
+            $addItemNameLabel.appendChild($addItemNameInput);
+
+            const $addItemPriceLabel = document.createElement('label');
+            $addItemPriceLabel.innerHTML = 'Price';
+            $addItemForm.appendChild($addItemPriceLabel);
+            const $addItemPriceInput = document.createElement('input');
+            $addItemPriceInput.setAttribute('id', 'addItemPriceInput');
+            $addItemPriceInput.setAttribute('type', 'number');
+            $addItemPriceLabel.appendChild($addItemPriceInput);
+
+            const $addItemQuantityLabel = document.createElement('label');
+            $addItemQuantityLabel.innerHTML = 'Quantity';
+            $addItemForm.appendChild($addItemQuantityLabel);
+            const $addItemQuantityInput = document.createElement('input');
+            $addItemQuantityInput.setAttribute('id', 'addItemQuantityInput');
+            $addItemQuantityInput.setAttribute('type', 'number');
+            $addItemQuantityLabel.appendChild($addItemQuantityInput);
+
+            const $addItemButton = document.createElement('button');
+            $addItemButton.innerHTML = 'Add item';
+            $addItemButton.setAttribute('id', 'addItem');
+            $addItemButton.addEventListener('click', this.addItemToBasket);
+            $addItemForm.appendChild($addItemButton);
+
+            // Добавляем форму для изменения количества товара
+            const $changeQuantityForm = document.createElement('form');
+            $basketControls.appendChild($changeQuantityForm);
+
+            const $changeQuantitySelect = document.createElement('select');
+            $changeQuantitySelect.setAttribute('id', 'changeQuantitySelect');
+            $changeQuantitySelect.addEventListener('change', this.handleSelectChange);
+            $changeQuantityForm.appendChild($changeQuantitySelect);
+            for (var i = 0; i < this.items.length; i++) {
+              const $changeQuantityOption = document.createElement('option');
+              $changeQuantityOption.innerHTML = this.items[i].name;
+              $changeQuantitySelect.appendChild($changeQuantityOption);
+            }
+
+            const $changeQuantitySpan = document.createElement('span');
+            $changeQuantitySpan.setAttribute('id', 'changeQuantitySpan');
+            const curSelectText = $changeQuantitySelect.options[$changeQuantitySelect.selectedIndex].text;
+            for (var i = 0; i < this.items.length; i++) {
+              if (this.items[i].name == curSelectText) {
+                $changeQuantitySpan.innerHTML = `Quantity: ${this.items[i].quantity}`;
+              }
+            }
+            $changeQuantityForm.appendChild($changeQuantitySpan);
+
+            const $changeQuantityLabel = document.createElement('label');
+            $changeQuantityLabel.innerHTML = 'New Quantity';
+            $changeQuantityForm.appendChild($changeQuantityLabel);
+            const $changeQuantityInput = document.createElement('input');
+            $changeQuantityInput.setAttribute('id', 'changeQuantityInput');
+            $changeQuantityInput.setAttribute('type', 'number');
+            $changeQuantityLabel.appendChild($changeQuantityInput);
+
+            const $changeQuantityButton = document.createElement('button');
+            $changeQuantityButton.innerHTML = 'Change Quantity';
+            $changeQuantityButton.setAttribute('id', 'changeQuantity');
+            $changeQuantityButton.addEventListener('click', this.changeQuantity);
+            $changeQuantityButton.addEventListener('click', this.handleSelectChange);
+            $changeQuantityForm.appendChild($changeQuantityButton);
+
+            // Добавляем форму для удаления товара
+            const $removeItemForm = document.createElement('form');
+            $basketControls.appendChild($removeItemForm);
+
+            const $removeItemSelect = document.createElement('select');
+            $removeItemSelect.setAttribute('id', 'removeItemSelect');
+            $removeItemForm.appendChild($removeItemSelect);
+            for (var i = 0; i < this.items.length; i++) {
+              const $removeItemOption = document.createElement('option');
+              $removeItemOption.innerHTML = this.items[i].name;
+              $removeItemSelect.appendChild($removeItemOption);
+            }
+
+            const $removeItemButton = document.createElement('button');
+            $removeItemButton.innerHTML = 'Remove Item';
+            $removeItemButton.setAttribute('id', 'removeItem');
+            $removeItemButton.addEventListener('click', this.removeItemFromBasket);
+            $removeItemForm.appendChild($removeItemButton);
+          },
+
+          prepareModal() {
+            const $closeSpan = document.getElementsByClassName('close')[0];
+            const $leftArrow = document.getElementById('ArrowLeft');
+            const $rigthArrow = document.getElementById('ArrowRight');
+            $closeSpan.addEventListener('click', this.handleCrossClick);
+            window.addEventListener('click', this.handleAnywhereClick);
+            $leftArrow.addEventListener('click', this.handleArrowClick);
+            $rigthArrow.addEventListener('click', this.handleArrowClick);
+            window.addEventListener('keydown', this.hadnleAnywhereKeydown);
+          },
+
+          openModalWindow(event) {
+            event.preventDefault();
+            const $modalWrapper = document.getElementsByClassName('modalWrapper')[0];
+            const $modalWindow = document.getElementsByClassName('modalWindow')[0];
+            $modalWrapper.classList.remove('hide');
+            $modalWrapper.classList.add('show');
+
+            const idParts = event.target.id.split('_');
+            $modalWindow.style.backgroundImage = `url(${basket.items[idParts[1]].pictures[0]})`;
+            $modalWindow.setAttribute('id', `pictureOfProduct_${idParts[1]}`);
+          },
+
+          handleCrossClick(event) {
+            basket.closeModal();
+          },
+
+          closeModal() {
+            const $modalWrapper = document.getElementsByClassName('modalWrapper')[0];
+            $modalWrapper.classList.remove('show');
+            $modalWrapper.classList.add('hide');
+          },
+
+          handleAnywhereClick(event) {
+            const $modalWindow = document.getElementsByClassName('modalWindow')[0];
+            if ((event.target.tagName != 'A') && (event.target.tagName != 'I') && (event.target != $modalWindow)) {
+              basket.closeModal();
+            }
+          },
+
+          handleArrowClick(event) {
+            basket.switchPictures(event.target.id);
+          },
+
+          switchPictures(directon) {
+            const $modalWindow = document.getElementsByClassName('modalWindow')[0];
+            const idParts = $modalWindow.id.split('_');
+
+            if (directon == 'ArrowRight') {
+              if (this.items[idParts[1]].curSelectPicture < 2) {
+                this.items[idParts[1]].curSelectPicture++;
+              } else {
+                this.items[idParts[1]].curSelectPicture = 0;
+              }
+            } else if (directon == 'ArrowLeft') {
+              if (this.items[idParts[1]].curSelectPicture > 0) {
+                this.items[idParts[1]].curSelectPicture--;
+              } else {
+                this.items[idParts[1]].curSelectPicture = 2;
+              }
+            }
+
+            const curSelectPicture = this.items[idParts[1]].curSelectPicture;
+            $modalWindow.style.backgroundImage = `url(${this.items[idParts[1]].pictures[curSelectPicture]})`;
+          },
+
+          hadnleAnywhereKeydown(event) {
+            const $modalWrapper = document.getElementsByClassName('modalWrapper')[0];
+            if ($modalWrapper.classList.contains('show')) {
+              if (event.key == 'ArrowRight' || event.key == 'ArrowLeft') {
+                basket.switchPictures(event.key);
+              } else if (event.key == 'Escape') {
+                basket.closeModal()
+              }
+            }
+          },
+
+          prepareCollapsable() {
+            const $nextButtons = document.getElementsByClassName('nextButton');
+            for (var i = 0; i < $nextButtons.length; i++) {
+              $nextButtons[i].addEventListener('click', this.handleNextButtonClick);
+            }
+          },
+
+          handleNextButtonClick(event) {
+            const $basket = document.getElementById('basket');
+
+            event.target.parentElement.classList.toggle('collapsed');
+            if (event.target.parentElement.nextElementSibling.id == 'basketControls') {
+              $basket.classList.toggle('collapsed');
+            } else {
+              event.target.parentElement.nextElementSibling.classList.toggle('collapsed');
+            }
+          },
+
+          displayProducts() {
+            const $productContainer = document.getElementById('productContainer');
+            const $template = document.getElementById('template');
+            $productContainer.addEventListener('click', this.handleBuyButtonClick);
+            for (var i = 0; i < 6; i++) {
+              const $product = $template.children[0].cloneNode(true);
+              $product.querySelector('.name').innerHTML = this.products[i].name;
+              $product.querySelector('img').src = this.products[i].image;
+              $product.querySelector('.desc').innerHTML = this.products[i].desc;
+              $product.querySelector('.price').innerHTML = this.products[i].price + ' ' + this.currency.toUpperCase();
+
+              const $buyButton = $product.querySelector('button');
+              $buyButton.innerHTML = 'Add to basket';
+              $buyButton.id = 'buyButton_' + i;
+              $productContainer.appendChild($product);
+            }
+          },
+
+          handleBuyButtonClick(event) {
+            if (event.target.tagName !== 'BUTTON') {
+              return;
+            }
+
+            const productName = event.target.parentElement.firstElementChild.innerHTML;
+            const isAlreadyInBasket = basket.isAlreadyInBasket(productName);
+
+            if (isAlreadyInBasket) {
+              for (var i = 0; i < basket.items.length; i++) {
+                if (basket.items[i].name === productName) {
+                  basket.items[i].quantity++;
+                }
+              }
+            } else {
+              const name = productName;
+              const numOfProduct = event.target.id.split('_')[1];
+              const price = basket.products[numOfProduct].price;
+              basket.items.push(new Product(name, price, 1));
+            }
+            basket.displayItems();
+            basket.redrawSelects();
+            basket.prepareCollapsable();
+          },
+
+          isAlreadyInBasket(productName) {
+            if (!this.items.length) {
+              return false;
+            }
+            const $itemList = document.getElementsByTagName('ol')[0].children;
+            for (var i = 0; i < $itemList.length; i++) {
+              if ($itemList[i].innerHTML.includes(productName)) {
+                return true;
+              }
+            }
+            return false;
+          },
+        }
+
+        basket.displayItems();
+        basket.displayControls();
+        basket.prepareModal();
+        basket.prepareCollapsable();
+        basket.displayProducts();
+
+        const snakeGame = {
+          fieldHeight: null,
+          fieldWidth: null,
+          $gamefield: null,
+          snakeX: null,
+          snakeY: null,
+          directon: 'top',
+          snake: [],
+          interval: null,
+          clearInterval: null,
+          shouldTeleportSnake: null,
+
+          prepareSnake() {
+            const $gameStart = document.getElementById('gameStart');
+            $gameStart.addEventListener('click', this.handleGameStartClick);
+
+            window.addEventListener('keydown', this.handleAnywhereKeydown);
+          },
+
+          drawGameField() {
+            const $gameContainer = document.getElementById('gameContainer');
+            $gameContainer.innerHTML = '';
+
+            this.$gamefield = document.createElement('table');
+            this.$gamefield.id = 'gameField';
+            $gameContainer.appendChild(this.$gamefield);
+
+            for (var i = 0; i < this.fieldHeight; i++) {
+              const $gameRow = document.createElement('tr');
+              for (var j = 0; j < this.fieldWidth; j++) {
+                const $gameCell = document.createElement('td');
+                $gameCell.classList.add('gameCell');
+                $gameRow.appendChild($gameCell);
+              }
+              this.$gamefield.appendChild($gameRow);
+            }
+          },
+
+          drawSnake() {
+            this.snakeX = Math.floor(this.fieldWidth /2);
+            this.snakeY = Math.floor(this.fieldHeight /2);
+
+            const $snakeHead = this.$gamefield.children[this.snakeY].children[this.snakeX];
+            $snakeHead.classList.add('snakeHead');
+
+            const $snakeTail = this.$gamefield.children[this.snakeY + 1].children[this.snakeX];
+            $snakeTail.classList.add('snake');
+
+            this.snake.push($snakeTail);
+            this.snake.push($snakeHead);
+          },
+
+          handleGameStartClick(event) {
+            snakeGame.fieldHeight = +document.getElementById('inputHeight').value;
+            snakeGame.fieldWidth = +document.getElementById('inputWidth').value;
+            snakeGame.interval = +document.getElementById('inputStartInterval').value;
+            snakeGame.shouldTeleportSnake = document.getElementById('labelForCheckbox').children[0].checked;
+
+            snakeGame.drawGameField();
+
+            snakeGame.drawSnake();
+
+            snakeGame.snakeInterval = setInterval(snakeGame.moveSnake, snakeGame.interval);
+            snakeGame.generateFood();
+          },
+
+          moveSnake() {
+            switch (snakeGame.directon) {
+              case 'top':
+                snakeGame.snakeY--;
+                break;
+              case 'bottom':
+                snakeGame.snakeY++;
+                break;
+              case 'left':
+                snakeGame.snakeX--;
+                break;
+              case 'right':
+                snakeGame.snakeX++;
+                break;
+            }
+
+            if (!snakeGame.isInBounds() && snakeGame.teleportSnake) {
+              snakeGame.teleportSnake();
+            }
+
+            let $newSnakeCell = null;
+            if (snakeGame.isInBounds()) {
+              $newSnakeCell = snakeGame.$gamefield.children[snakeGame.snakeY].children[snakeGame.snakeX]
+            }
+
+            if (snakeGame.isInBounds() && !snakeGame.isSnake($newSnakeCell)) {
+              $newSnakeCell.classList.add('snakeHead');
+              snakeGame.snake.push($newSnakeCell);
+
+              const $previousSnakeCell = snakeGame.snake[snakeGame.snake.length - 2];
+              $previousSnakeCell.classList.remove('snakeHead');
+              $previousSnakeCell.classList.add('snake');
+
+              if (!$newSnakeCell.classList.contains('food')) {
+                const $lastSnakeCell = snakeGame.snake.shift();
+                $lastSnakeCell.classList.remove('snake');
+              } else {
+                $newSnakeCell.classList.remove('food');
+                snakeGame.generateFood();
+              }
+            } else {
+              snakeGame.gameOver();
+            }
+
+          },
+
+          handleAnywhereKeydown(event) {
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+              event.preventDefault();
+            }
+            switch (event.key) {
+              case 'a':
+              case 'ArrowLeft':
+                if (snakeGame.directon !== 'right') {
+                  snakeGame.directon = 'left';
+                }
+                break;
+              case 'w':
+              case 'ArrowUp':
+                if (snakeGame.directon !== 'bottom') {
+                  snakeGame.directon = 'top';
+                }
+                break;
+              case 'd':
+              case 'ArrowRight':
+                if (snakeGame.directon !== 'left') {
+                  snakeGame.directon = 'right';
+                }
+                break;
+              case 's':
+              case 'ArrowDown':
+                if (snakeGame.directon !== 'top') {
+                  snakeGame.directon = 'bottom';
+                }
+                break;
+            }
+          },
+
+          generateFood() {
+            let foodCreated = false;
+
+            while (!foodCreated) {
+              const foodX = Math.floor(Math.random() * snakeGame.fieldWidth);
+              const foodY = Math.floor(Math.random() * snakeGame.fieldHeight);
+
+              const $foodCell = snakeGame.$gamefield.children[foodX].children[foodY];
+
+              if (!$foodCell.classList.contains('snake')) {
+                foodCreated = true;
+                $foodCell.classList.add('food');
+              }
+            }
+          },
+
+          isInBounds() {
+            return this.snakeX >= 0 && this.snakeX < this.fieldWidth && this.snakeY >= 0 && this.snakeY < this.fieldHeight;
+          },
+
+          isSnake(cell) {
+            return this.snake.includes(cell);
+          },
+
+          gameOver() {
+            alert('Game over');
+            clearInterval(this.snakeInterval);
+            this.directon = 'top';
+            for (var i = 0; i < this.snake.length; i++) {
+              this.snake[i].classList.remove('snake');
+              this.snake[i].classList.remove('snakeHead');
+            }
+            this.snake = [];
+            const $food = document.getElementsByClassName('food')[0];
+            $food.classList.remove('food');
+          },
+
+          teleportSnake() {
+            if (this.snakeX < 0) {
+              this.snakeX = this.fieldWidth - 1;
+            } else if (this.snakeX >= this.fieldWidth) {
+              this.snakeX = 0;
+            } else if (this.snakeY < 0) {
+              this.snakeY = this.fieldHeight - 1;
+            } else if (this.snakeY >= this.fieldHeight) {
+              this.snakeY = 0;
+            }
+          },
+        };
+
+        snakeGame.prepareSnake();
+      }
+
+      window.onload = wrapperFunc;
+    </script>
+  </head>
+  <body>
+    <h1>Exercises 1, 2 & 4</h1>
+    <div class="modalWrapper">
+      <div class='modalWindow'>
+        <span class="close">&times;</span>
+        <i class="fas fa-arrow-left" id='ArrowLeft'></i>
+        <i class="fas fa-arrow-right" id='ArrowRight'></i>
+      </div>
+    </div>
+    <div id='basket'></div>
+    <div id='deliveryAdress' class="collapsed">
+      <h2>Enter delivery address</h2>
+      <textarea rows="8" cols="80"></textarea>
+      <button class='nextButton'>Next</button>
+    </div>
+    <div id='comment' class="collapsed">
+      <h2>Enter your comment</h2>
+      <textarea rows="8" cols="80"></textarea>
+      <button class='nextButton'>Return to basket</button>
+    </div>
+    <div id='basketControls'></div>
+    <div id='template'>
+      <div class="product">
+        <h6 class='name'></h6>
+        <img src="" alt="">
+        <p class='desc'></p>
+        <span class='price'></span>
+        <button class="buyButton"></button>
+      </div>
+    </div>
+    <div id='productContainer'></div>
+    <h1>Exercise 3</h1>
+    <div id='gameControls'>
+      <input id='inputWidth' placeholder="Enter gamefield width" type="number">
+      <input id='inputHeight' placeholder="Enter gamefield height" type="number">
+      <input id="inputStartInterval" placeholder="Enter turn interval in ms" type="number">
+      <label id='labelForCheckbox'>
+        Teleport snake?
+        <input type="checkbox">
+      </label>
+      <button id='gameStart'>Start new game</button>
+    </div>
+    <div id='gameContainer'>
+      <span>Set gamefield width and height</span>
+    </div>
+  </body>
+</html>
