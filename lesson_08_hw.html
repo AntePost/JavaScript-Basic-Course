@@ -136,6 +136,7 @@
             this.snake = [];
             this.counter = 0;
             document.getElementById('score').innerHTML = this.counter;
+            clearInterval(this.snakeInterval);
 
             this.drawGameField();
 
