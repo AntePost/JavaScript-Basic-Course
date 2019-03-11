@@ -73,6 +73,7 @@
           clearInterval: null,
           shouldTeleportSnake: null,
           hasRedrawn: false,
+          counter: 0,
 
           prepareSnake() {
             this.handleGameStartClick = this.handleGameStartClick.bind(this);
@@ -125,6 +126,8 @@
             this.interval = +document.getElementById('inputStartInterval').value;
             this.shouldTeleportSnake = document.getElementById('labelForCheckbox').children[0].checked;
             this.snake = [];
+            this.counter = 0;
+            document.getElementById('score').innerHTML = this.counter;
 
             this.drawGameField();
 
@@ -177,6 +180,9 @@
               } else {
                 $newSnakeCell.classList.remove('food');
                 this.generateFood();
+
+                this.counter++;
+                document.getElementById('score').innerHTML = this.counter;
               }
             } else {
               this.gameOver();
@@ -288,7 +294,7 @@
         <input type="checkbox">
       </label>
       <button id='gameStart'>Start new game</button>
-      <p>Score: 0</p>
+      <p>Score: <span id='score'>0</span></p>
     </div>
     <div id='gameContainer'>
       <span>Set gamefield width and height</span>
