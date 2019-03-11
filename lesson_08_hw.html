@@ -61,6 +61,14 @@
     <script>
       function wrapperFunc() {
         // Exercise 1
+        /*
+        Updated the snake game by redefining 'this' in some methods where it didn't refer to the game object.
+        Also fixed a couple of bugs and added score display.
+        Что касается собственно ДЗ, то честно говоря не очень представляю, где можно применить замыкания в змейке.
+        Можно сделать вывод счета при помощи замыканий, но его проще реализовать через свойство объекта.
+        Вообще на MDN написано, что 'you can use a closure anywhere that you might normally use an object with only a single method'.
+        Поскольку моя игра уже написана в объекте, то непонятно, зачем сюда еще вставлять замыкания.
+        */
         const snakeGame = {
           fieldHeight: null,
           fieldWidth: null,
