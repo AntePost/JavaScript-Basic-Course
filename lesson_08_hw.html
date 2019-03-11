@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Lesson 7 Homework</title>
+    <title>Lesson 8 Homework</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <style>
       h1 {
@@ -75,6 +75,9 @@
           hasRedrawn: false,
 
           prepareSnake() {
+            this.handleGameStartClick = this.handleGameStartClick.bind(this);
+            this.handleAnywhereKeydown = this.handleAnywhereKeydown.bind(this);
+
             const $gameStart = document.getElementById('gameStart');
             $gameStart.addEventListener('click', this.handleGameStartClick);
 
@@ -117,18 +120,18 @@
           },
 
           handleGameStartClick(event) {
-            snakeGame.fieldHeight = +document.getElementById('inputHeight').value;
-            snakeGame.fieldWidth = +document.getElementById('inputWidth').value;
-            snakeGame.interval = +document.getElementById('inputStartInterval').value;
-            snakeGame.shouldTeleportSnake = document.getElementById('labelForCheckbox').children[0].checked;
-            snakeGame.snake = [];
+            this.fieldHeight = +document.getElementById('inputHeight').value;
+            this.fieldWidth = +document.getElementById('inputWidth').value;
+            this.interval = +document.getElementById('inputStartInterval').value;
+            this.shouldTeleportSnake = document.getElementById('labelForCheckbox').children[0].checked;
+            this.snake = [];
 
-            snakeGame.drawGameField();
+            this.drawGameField();
 
-            snakeGame.drawSnake();
+            this.drawSnake();
 
-            snakeGame.snakeInterval = setInterval(snakeGame.moveSnake, snakeGame.interval);
-            snakeGame.generateFood();
+            this.snakeInterval = setInterval(this.moveSnake, this.interval);
+            this.generateFood();
           },
 
           moveSnake() {
@@ -151,7 +154,7 @@
                 break;
             }
 
-            if (!this.isInBounds() && this.teleportSnake) {
+            if (!this.isInBounds() && this.shouldTeleportSnake) {
               this.teleportSnake();
             }
 
@@ -185,34 +188,34 @@
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
               event.preventDefault();
             }
-            if (snakeGame.hasRedrawn) {
+            if (this.hasRedrawn) {
               switch (event.key) {
                 case 'a':
                 case 'ArrowLeft':
-                  if (snakeGame.directon !== 'right') {
-                    snakeGame.directon = 'left';
-                    snakeGame.hasRedrawn = false;
+                  if (this.directon !== 'right') {
+                    this.directon = 'left';
+                    this.hasRedrawn = false;
                   }
                   break;
                 case 'w':
                 case 'ArrowUp':
-                  if (snakeGame.directon !== 'bottom') {
-                    snakeGame.directon = 'top';
-                    snakeGame.hasRedrawn = false;
+                  if (this.directon !== 'bottom') {
+                    this.directon = 'top';
+                    this.hasRedrawn = false;
                   }
                   break;
                 case 'd':
                 case 'ArrowRight':
-                  if (snakeGame.directon !== 'left') {
-                    snakeGame.directon = 'right';
-                    snakeGame.hasRedrawn = false;
+                  if (this.directon !== 'left') {
+                    this.directon = 'right';
+                    this.hasRedrawn = false;
                   }
                   break;
                 case 's':
                 case 'ArrowDown':
-                  if (snakeGame.directon !== 'top') {
-                    snakeGame.directon = 'bottom';
-                    snakeGame.hasRedrawn = false;
+                  if (this.directon !== 'top') {
+                    this.directon = 'bottom';
+                    this.hasRedrawn = false;
                   }
                   break;
               }
@@ -223,10 +226,10 @@
             let foodCreated = false;
 
             while (!foodCreated) {
-              const foodX = Math.floor(Math.random() * snakeGame.fieldWidth);
-              const foodY = Math.floor(Math.random() * snakeGame.fieldHeight);
+              const foodX = Math.floor(Math.random() * this.fieldWidth);
+              const foodY = Math.floor(Math.random() * this.fieldHeight);
 
-              const $foodCell = snakeGame.$gamefield.children[foodX].children[foodY];
+              const $foodCell = this.$gamefield.children[foodX].children[foodY];
 
               if (!$foodCell.classList.contains('snake')) {
                 foodCreated = true;
